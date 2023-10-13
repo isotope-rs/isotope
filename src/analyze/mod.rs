@@ -35,7 +35,7 @@ fn run_analysis(cont: &Context) {
     aws: r, conf: conf};
 
     // Create the results set
-    let mut results: Arc<Mutex<Vec<analyzer::Results>>> = Arc::new((Mutex::new(Vec::new())));
+    let results: Arc<Mutex<Vec<analyzer::Results>>> = Arc::new(Mutex::new(Vec::new()));
 
     block_on(analysis.run(results))
 }
