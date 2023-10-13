@@ -1,4 +1,6 @@
 mod analysis;
+use crate::analyzer;
+use std::sync::{Arc, Mutex};
 use crate::config;
 use crate::config::Conf;
 use seahorse::{Command, Context,Flag, FlagType};
@@ -32,5 +34,8 @@ fn run_analysis(cont: &Context) {
         context: cont,
     aws: r, conf: conf};
 
-    block_on(analysis.run())
+    // Create the results set
+    let mut results: Arc<Mutex<Vec<analyzer::Results>>> = Arc::new((Mutex::new(Vec::new())));
+
+    block_on(analysis.run(results))
 }
