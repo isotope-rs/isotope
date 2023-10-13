@@ -11,10 +11,10 @@ pub struct CreateAnalysis<'a> {
 }
 
 impl<'a> CreateAnalysis<'a> {
-    pub async fn run(self, _results: Arc<Mutex<Vec<analyzer::Results>>>) {
+    pub async fn run(self, results: Arc<Mutex<Vec<analyzer::Results>>>) {
         println!("{}:{}","Using cloud provider ".green(),self.conf.cloud.blue());
        for an in  analyzer::get_analyzers().into_iter() {
-            an.run().await
+            an.run(self.aws.clone(),results.clone()).await
        }
     }
 }

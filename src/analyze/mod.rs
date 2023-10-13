@@ -38,4 +38,6 @@ fn run_analysis(cont: &Context) {
     let results: Arc<Mutex<Vec<analyzer::Results>>> = Arc::new(Mutex::new(Vec::new()));
 
     block_on(analysis.run(results))
+
+    // Parse results
 }
