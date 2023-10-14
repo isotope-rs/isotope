@@ -6,6 +6,7 @@ use crate::config::Conf;
 
 
 use aws_config::meta::region::RegionProviderChain;
+use futures::StreamExt;
 
 
 pub async fn run_analysis() {
@@ -23,9 +24,13 @@ pub async fn run_analysis() {
     let results: Vec<analyzer::Results> = Vec::new();
     let analyzers: [Box<dyn analyzer::analyzer_trait::Analyzer>; 2] = analyzer::generate_analyzers(config.clone(), results.clone());
 
-    analyzers.into_iter().map(| an: Box<dyn analyzer::analyzer_trait::Analyzer>
+    let tasks = analyzers.into_iter().map(| an: Box<dyn analyzer::analyzer_trait::Analyzer>
     | tokio::spawn(async move {
         an.run().await;
     })).collect::<Vec<_>>();
+
+    for task in tasks {
+        task.await.unwrap();
+    }
 
 }

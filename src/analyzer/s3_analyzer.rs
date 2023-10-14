@@ -1,9 +1,9 @@
 use crate::analyzer::analyzer_trait;
 use async_trait::async_trait;
 use colored::Colorize;
-
+use std::sync::{Arc, Mutex};
 use crate::analyzer;
-use aws_sdk_s3::{Client};
+use aws_sdk_s3::{config::Region, meta::PKG_VERSION, Client, Error};
 pub struct S3Analyzer {
     pub config: aws_config::SdkConfig,
     pub results:  Vec<analyzer::Results>,

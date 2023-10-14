@@ -13,6 +13,5 @@ impl<'a> analyzer_trait::Analyzer for CloudwatchAnalyzer {
     async fn run(&self) {
         println!("{} {} {}","Running".green(),"Cloudwatch".blue(),"analyzer".green())
 
-
     }
 }
