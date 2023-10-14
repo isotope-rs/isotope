@@ -1,7 +1,7 @@
 use crate::analyzer::analyzer_trait::Analyzer;
 
 mod analyzer_trait;
-mod s3_analyzer;
+pub mod s3_analyzer;
 mod cloudwatch_analyzer;
 pub struct Results {
 

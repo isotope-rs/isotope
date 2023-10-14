@@ -9,7 +9,7 @@ pub struct CloudwatchAnalyzer {
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for CloudwatchAnalyzer {
-    async fn run(&self,config: aws_config::SdkConfig, results: Arc<Mutex<Vec<analyzer::Results>>>) {
+    async fn run(&self,config: &aws_config::SdkConfig, _results: &Vec<analyzer::Results>) {
         println!("{} {} {}","Running".green(),"Cloudwatch".blue(),"analyzer".green())
 
 

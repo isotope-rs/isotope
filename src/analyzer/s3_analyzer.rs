@@ -3,14 +3,28 @@ use async_trait::async_trait;
 use colored::Colorize;
 use std::sync::{Arc, Mutex};
 use crate::analyzer;
-
+use aws_sdk_s3::{config::Region, meta::PKG_VERSION, Client, Error};
 pub struct S3Analyzer {
 
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {
-    async fn run(&self,config: aws_config::SdkConfig,results: Arc<Mutex<Vec<analyzer::Results>>>) {
-        println!("{} {} {}","Running".green(),"S3".blue(),"analyzer".green())
+    async fn run(&self,config: &aws_config::SdkConfig,_results: &Vec<analyzer::Results>) {
+        println!("{} {} {}","Running".green(),"S3".blue(),"analyzer".green());
+        let client = Client::new(&config);
+        let resp = client.list_buckets().send().await;
+        match resp {
+            Ok(x) => {
+                for bucket in x.buckets {
 
+                   for b in bucket.into_iter() {
+                       println!("Found bucket {}", b.name.unwrap());
+                   }
+                }
+            },
+            Err(x) => {
+                println!("Something went wrong:{}", x.to_string())
+            }
+        }
     }
 }
