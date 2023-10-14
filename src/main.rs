@@ -1,8 +1,8 @@
 mod analyze;
 mod configure;
 mod config;
-use seahorse::{App, Flag, FlagType};
-use std::env;
+
+
 mod analyzer;
 // const
 const CARGO_PKG_NAME: &str = "isotope";

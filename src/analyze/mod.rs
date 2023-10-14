@@ -1,12 +1,12 @@
 
 use crate::analyzer;
-use std::sync::{Arc, Mutex};
+
 use crate::config;
 use crate::config::Conf;
-use futures::future;
-use seahorse::{Command, Context,Flag, FlagType};
+
+
 use aws_config::meta::region::RegionProviderChain;
-use futures::executor::block_on;
+
 
 pub async fn run_analysis() {
     let mut conf: Conf = config::Conf{ cloud:String::new()};
@@ -20,9 +20,12 @@ pub async fn run_analysis() {
     let config = aws_config::from_env().region(region_provider).load().await;
 
     // Create the results set
-    let results: Vec<analyzer::Results> = (Vec::new());
-    for an in  analyzer::get_analyzers().into_iter() {
-        tokio::spawn(future::lazy(|_| an.run(&config,&results)));
-    }
+    let results: Vec<analyzer::Results> = Vec::new();
+    let analyzers: [Box<dyn analyzer::analyzer_trait::Analyzer>; 2] = analyzer::generate_analyzers(config.clone(), results.clone());
+
+    analyzers.into_iter().map(| an: Box<dyn analyzer::analyzer_trait::Analyzer>
+    | tokio::spawn(async move {
+        an.run().await;
+    })).collect::<Vec<_>>();
 
 }

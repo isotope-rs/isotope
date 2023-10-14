@@ -1,15 +1,16 @@
 use crate::analyzer::analyzer_trait;
 use async_trait::async_trait;
 use colored::Colorize;
-use std::sync::{Arc, Mutex};
+
 use crate::analyzer;
 
 pub struct CloudwatchAnalyzer {
-
+    pub config: aws_config::SdkConfig,
+    pub results:  Vec<analyzer::Results>,
 }
 #[async_trait]
-impl analyzer_trait::Analyzer for CloudwatchAnalyzer {
-    async fn run(&self,config: &aws_config::SdkConfig, _results: &Vec<analyzer::Results>) {
+impl<'a> analyzer_trait::Analyzer for CloudwatchAnalyzer {
+    async fn run(&self) {
         println!("{} {} {}","Running".green(),"Cloudwatch".blue(),"analyzer".green())
 
 
