@@ -8,8 +8,8 @@ mod aws_config_analyzer;
 pub struct Results {
 
 }
-pub fn generate_analyzers( config: aws_config::SdkConfig,results: Vec<Results>) -> [Box<dyn Analyzer>; 2] {
-    let analyzers: [Box<dyn Analyzer>; 2] = [Box::new(aws_config_analyzer::AWSConfigAnalyzer {
+pub fn generate_analyzers( config: aws_config::SdkConfig,results: Vec<Results>) -> Vec<Box<dyn Analyzer>> {
+    let analyzers: Vec<Box<dyn Analyzer>> = vec!(Box::new(aws_config_analyzer::AWSConfigAnalyzer {
         config: config.clone(),
         results: results.clone()
     }),
@@ -17,7 +17,7 @@ pub fn generate_analyzers( config: aws_config::SdkConfig,results: Vec<Results>) 
             config: config.clone(),
             results: results.clone()
         })
-    ];
+    );
 
     return analyzers
 }

@@ -14,6 +14,8 @@ const CARGO_PKG_VERSION: &str = "0.1";
 pub struct Args {
     #[arg(short, long)]
     Analyzer: String,
+    #[arg(short, long)]
+    Verbose: bool,
 }
 #[tokio::main]
 async fn main() {

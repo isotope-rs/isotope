@@ -24,7 +24,7 @@ pub async fn run_analysis(args: &Args) {
 
     // Create the results set
     let results: Vec<analyzer::Results> = Vec::new();
-    let analyzers: [Box<dyn analyzer::analyzer_trait::Analyzer>; 2] = analyzer::generate_analyzers(config.clone(), results.clone());
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone(), results.clone());
 
     if args.Analyzer != "" {
         let filteredAnalyzer = analyzers.iter().find(|x| x.get_name() == args.Analyzer.as_str());
