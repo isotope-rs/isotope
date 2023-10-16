@@ -1,4 +1,4 @@
-use clap::{parser, Parser};
+use clap::{Parser};
 mod analyze;
 mod configure;
 mod config;

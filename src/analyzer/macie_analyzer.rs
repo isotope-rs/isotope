@@ -3,7 +3,7 @@ use crate::analyzer;
 use crate::analyzer::analyzer_trait;
 use async_trait::async_trait;
 use colored::Colorize;
-use aws_sdk_macie;
+
 
 pub struct MacieAnalyzer {
     pub config: aws_config::SdkConfig,

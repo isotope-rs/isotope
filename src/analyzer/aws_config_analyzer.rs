@@ -1,8 +1,8 @@
-use std::any::Any;
+
 use crate::analyzer;
 use crate::analyzer::analyzer_trait;
 use aws_sdk_config::types::ResourceType;
-use aws_sdk_config::{config::Region, meta::PKG_VERSION, Client, Error};
+use aws_sdk_config::{Client, Error};
 use async_trait::async_trait;
 use colored::Colorize;
 
