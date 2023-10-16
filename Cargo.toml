@@ -16,3 +16,7 @@ colored = "2.0.4"
 futures = "0.3.28"
 async-trait = "0.1.73"
 aws-sdk-s3 = "0.33.0"
+aws-sdk-macie = "0.33.0"
+v = "0.1.0"
+aws-sdk-config = "0.33.0"
+clap = { version = "4.4.6", features = ["derive"] }

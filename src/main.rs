@@ -1,21 +1,24 @@
+use clap::{parser, Parser};
 mod analyze;
 mod configure;
 mod config;
-
-
 mod analyzer;
 // const
-#[warn(dead_code)]
 const CARGO_PKG_NAME: &str = "isotope";
-#[warn(dead_code)]
 const CARGO_PKG_DESCRIPTION: &str = "Isotope allows for the debugging of AWS services with AI";
-#[warn(dead_code)]
 const CARGO_PKG_AUTHORS: &str = "AlexsJones";
-#[warn(dead_code)]
 const CARGO_PKG_VERSION: &str = "0.1";
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+pub struct Args {
+    #[arg(short, long)]
+    Analyzer: String,
+}
 #[tokio::main]
 async fn main() {
 
-    analyze::run_analysis().await;
+    let args = Args::parse();
+
+    analyze::run_analysis(&args).await;
 }
