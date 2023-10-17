@@ -1,28 +1,29 @@
 
-use crate::analyzer;
 use crate::analyzer::analyzer_trait;
 use aws_sdk_config::types::ResourceType;
 use aws_sdk_config::{Client, Error};
+
 use async_trait::async_trait;
+use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
 
 pub struct AWSConfigAnalyzer {
     pub config: aws_config::SdkConfig,
-    pub results:  Vec<analyzer::Results>,
 }
 #[async_trait]
-impl<'a> analyzer_trait::Analyzer for AWSConfigAnalyzer {
-    async fn run(&self) {
+impl analyzer_trait::Analyzer for AWSConfigAnalyzer {
+    async fn run(&self) -> Option<Vec<AnalysisResults>> {
         println!("{} {} {}","Running".green(),"aws-config".blue(),"analyzer".green());
-        let client = Client::new(&self.config);
+        let _client = Client::new(&self.config);
 
-        show_resources(true,&client).await;
+     //   show_resources(true,&client).await?;
+        None
     }
      fn get_name(&self)-> &str {
         "aws_config"
     }
 }
-async fn show_resources(verbose: bool, client: &Client) -> Result<(), Error> {
+async fn show_resources(verbose: bool, client: &Client) -> Result<(),  Error> {
 
     for value in ResourceType::values() {
         let parsed = ResourceType::from(*value);
