@@ -71,6 +71,8 @@ pub async fn run_analysis(args: &Args) {
                 task.await.unwrap();
             }
 
+            // print results
+            results.iter().for_each(|x| println!("{:?}",x));
         }
     }
 }
