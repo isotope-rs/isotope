@@ -1,33 +1,26 @@
-use std::sync::{Arc, Mutex};
-use crate::{analyzer, Args};
-
+use crate::analyzer::analyzer_trait::Analyzer;
+use crate::analyzer::types::AnalysisResults;
 use crate::config;
 use crate::config::Conf;
-
-
+use crate::{analyzer, Args};
 use aws_config::meta::region::RegionProviderChain;
-
-use futures::StreamExt;
-use crate::analyzer::analyzer_trait::Analyzer;
-use crate::analyzer::types;
-use crate::analyzer::types::AnalysisResults;
-
+use std::sync::mpsc;
+use std::sync::mpsc::{Receiver, Sender};
 
 pub async fn run_analysis(args: &Args) {
-    let mut conf: Conf = config::Conf{ cloud:String::new()};
+    let mut conf: Conf = config::Conf {
+        cloud: String::new(),
+    };
     let c = config::get_or_create_config();
     match c {
         Ok(x) => conf = x,
-        Err(e) => println!("Error detected {:?}",e.to_string())
+        Err(e) => println!("Error detected {:?}", e.to_string()),
     }
     // Setup available providers
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
-
-    // Create the results set
-    let mut re: Vec<AnalysisResults> = vec!();
-
-
+    // Create channels
+    let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
     let mut analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
 
     match &args.Analyzer {
@@ -35,28 +28,49 @@ pub async fn run_analysis(args: &Args) {
             let filteredAnalyzer = analyzers.iter().find(|x| x.get_name() == analyzerArg);
             match filteredAnalyzer {
                 Some(x) => {
+                    let thread_tx = tx.clone();
                     let response = x.run().await;
-                    println!("{:?}", response);
                     match response {
-                        Some(mut respResults) => {
-                            re.append(&mut respResults);
-                        },
-                        None => { }
+                        Some(respResults) => {
+                            thread_tx.send(respResults).unwrap();
+                        }
+                        None => {
+                            thread_tx.send(vec!(AnalysisResults::new())).unwrap();
+                        }
                     }
-                },
-                None => println!("Analyzer of type not found")
+                }
+                None => println!("Analyzer of type not found"),
             }
         }
         None => {
-            let tasks = analyzers.into_iter().map(|an: Box<dyn analyzer::analyzer_trait::Analyzer>|
-                tokio::spawn(async move {
-                     an.run().await;
-                })).collect::<Vec<_>>();
-
+            let mut tasks = vec!();
+            // Generate threads
+            let mut count = 0;
+            for currentAnalyzer in analyzers {
+                let thread_tx = tx.clone();
+                tasks.push(tokio::spawn(async move {
+                    let response = currentAnalyzer.run().await;
+                    match response {
+                        Some(respResults) => {
+                            thread_tx.send(respResults).unwrap();
+                        }
+                        None => {
+                            thread_tx.send(vec!(AnalysisResults::new())).unwrap();
+                        }
+                    }
+                }));
+                count += 1;
+            }
+            let mut results: Vec<AnalysisResults> = vec!();
+            // Aggregate results
+            for n in 0..count {
+                let rxResult = rx.recv();
+                results.append(&mut rxResult.unwrap());
+            }
             for task in tasks {
                 task.await.unwrap();
             }
+
         }
     }
-
 }
