@@ -14,14 +14,8 @@ pub struct MacieAnalyzer {
 impl analyzer_trait::Analyzer for MacieAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
         println!("{} {} {}","Running".green(),"macie".blue(),"analyzer".green());
-        // let client = aws_sdk_macie::Client::new(&self.config);
-        //
-        // let result = client.associate_member_account()
-        //     .member_account_id("493588633530")
-        //     .send()
-        //     .await;
-        //
-        // println!("{:?}",result);
+
+        //TODO: This is demo code to show the results capture works
         Some(vec!(AnalysisResults{
             message: "Something broken".to_string()
         }) )

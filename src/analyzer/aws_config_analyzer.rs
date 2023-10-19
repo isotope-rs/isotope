@@ -35,6 +35,8 @@ async fn show_resources(verbose: bool, client: &Client) -> Result<(),  Error> {
 
         let resources = resp.resource_identifiers();
 
+
+        // TODO: This is just demo code to test the analyzer works
         if resources.is_some() && verbose {
             println!();
             println!("Resources of type {}:", value);
