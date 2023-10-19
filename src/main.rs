@@ -18,6 +18,8 @@ pub struct Args {
     Analyzer: Option<String>,
     #[arg(short, long)]
     Verbose: bool,
+    #[arg(short,long)]
+    JSON: Option<bool>,
 }
 #[tokio::main]
 async fn main() {
