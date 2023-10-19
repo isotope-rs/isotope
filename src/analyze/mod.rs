@@ -21,12 +21,12 @@ pub async fn run_analysis(args: &Args) {
     let config = aws_config::from_env().region(region_provider).load().await;
     // Create channels
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
-    let mut analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
 
-    match &args.Analyzer {
-        Some(analyzerArg) => {
-            let filteredAnalyzer = analyzers.iter().find(|x| x.get_name() == analyzerArg);
-            match filteredAnalyzer {
+    match &args.analyzer {
+        Some(analyzer_arg) => {
+            let filtered_analyzer = analyzers.iter().find(|x| x.get_name() == analyzer_arg);
+            match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
                     let response = x.run().await;
@@ -39,17 +39,17 @@ pub async fn run_analysis(args: &Args) {
                         }
                     }
                 }
-                None => println!("Analyzer of type not found"),
+                None => println!("analyzer of type not found"),
             }
         }
         None => {
             let mut tasks = vec![];
             // Generate threads
             let mut count = 0;
-            for currentAnalyzer in analyzers {
+            for current_analyzer in analyzers {
                 let thread_tx = tx.clone();
                 tasks.push(tokio::spawn(async move {
-                    let response = currentAnalyzer.run().await;
+                    let response = current_analyzer.run().await;
                     match response {
                         Some(respResults) => {
                             thread_tx.send(respResults).unwrap();
@@ -63,17 +63,14 @@ pub async fn run_analysis(args: &Args) {
             }
             let mut results: Vec<AnalysisResults> = vec![];
             // Aggregate results
-            for n in 0..count {
-                let rxResult = rx.recv();
-                results.append(&mut rxResult.unwrap());
+            for _n in 0..count {
+                let rx_result = rx.recv();
+                results.append(&mut rx_result.unwrap());
             }
             for task in tasks {
                 task.await.unwrap();
             }
-
-            let mut process: outputs::Processor;
-
-            match args.JSON {
+            match args.json {
                 Some(x) => {
                     let p = outputs::Processor::new(results, Some(outputs::Configuration::new(x)));
                     p.print();

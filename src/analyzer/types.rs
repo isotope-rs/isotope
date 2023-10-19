@@ -1,10 +1,10 @@
 #[derive(Debug,Clone)]
 pub struct AnalysisResults {
-    pub Message: String,
+    pub message: String,
 }
 
 impl AnalysisResults {
     pub fn new() -> AnalysisResults{
-        return Self{Message: "".to_string()}
+        return Self{ message: "".to_string()}
     }
 }

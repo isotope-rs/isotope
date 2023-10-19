@@ -10,8 +10,8 @@ pub struct Configuration {
 }
 
 impl Processor {
-	pub fn new(analysis_results: Vec<AnalysisResults>, config: Option<Configuration> ) -> Processor {
-		return Self{  analysis_results, config, };
+	pub fn new(analysis_results: Vec<AnalysisResults>, config: Option<Configuration> ) -> Self {
+		 Self{  analysis_results, config, }
 	}
 
 	pub fn print(&self) {
@@ -20,7 +20,7 @@ impl Processor {
 }
 
 impl Configuration {
-	pub fn new(json_output: bool) -> Configuration {
-		return Self{ json_output}
+	pub fn new(json_output: bool) -> Self {
+		 Self{ json_output}
 	}
 }

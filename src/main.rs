@@ -15,11 +15,11 @@ const CARGO_PKG_VERSION: &str = "0.1";
 #[command(author, version, about, long_about = None)]
 pub struct Args {
     #[arg(short, long)]
-    Analyzer: Option<String>,
+    analyzer: Option<String>,
     #[arg(short, long)]
-    Verbose: bool,
+    verbose: bool,
     #[arg(short,long)]
-    JSON: Option<bool>,
+    json: Option<bool>,
 }
 #[tokio::main]
 async fn main() {

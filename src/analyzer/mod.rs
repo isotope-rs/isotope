@@ -14,5 +14,5 @@ pub fn generate_analyzers<'a>( config: aws_config::SdkConfig) -> Vec<Box<dyn Ana
             config: config.clone(),
         })
     );
-    return analyzers
+    analyzers
 }

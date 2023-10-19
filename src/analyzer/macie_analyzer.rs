@@ -23,7 +23,7 @@ impl analyzer_trait::Analyzer for MacieAnalyzer {
         //
         // println!("{:?}",result);
         Some(vec!(AnalysisResults{
-            Message: "Something broken".to_string()
+            message: "Something broken".to_string()
         }) )
     }
      fn get_name(&self) -> &str {
