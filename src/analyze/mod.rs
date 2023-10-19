@@ -51,8 +51,8 @@ pub async fn run_analysis(args: &Args) {
                 tasks.push(tokio::spawn(async move {
                     let response = current_analyzer.run().await;
                     match response {
-                        Some(respResults) => {
-                            thread_tx.send(respResults).unwrap();
+                        Some(resp_results) => {
+                            thread_tx.send(resp_results).unwrap();
                         }
                         None => {
                             thread_tx.send(vec![AnalysisResults::new()]).unwrap();
