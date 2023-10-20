@@ -15,7 +15,27 @@ impl Processor {
 	}
 
 	pub fn print(&self) {
+		match &self.config {
+			Some(x)=> {
+				match x.json_output {
+					true => {
+						self.print_json();
+					},
+					_ => self.print_text(),
+				}
+			},
+			_ => self.print_text(),
+		}
 
+	}
+	fn print_text(&self) {
+		self.analysis_results.iter().for_each(|x| println!("{:?}",x.message));
+	}
+
+	fn print_json(&self) {
+
+		let v = serde_json::to_value(&self.analysis_results).unwrap();
+		print!("{:?}",v);
 	}
 }
 
