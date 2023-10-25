@@ -6,7 +6,6 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-seahorse = "2.1"
 simple-home-dir = "0.2.0"
 serde_json = "1.0.107"
 serde = {version= "1.0.188", features = ["derive"] }

@@ -7,6 +7,6 @@ pub struct AnalysisResults {
 
 impl AnalysisResults {
     pub fn new() -> AnalysisResults{
-        return Self{ message: "".to_string()}
+        Self{ message: "".to_string()}
     }
 }

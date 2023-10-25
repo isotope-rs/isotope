@@ -1,10 +1,10 @@
 use std::error::Error;
 use std::sync::Arc;
-use aws_sdk_iam::operation::create_role::{CreateRoleError, CreateRoleOutput};
+use aws_sdk_iam::operation::create_role::{CreateRoleError};
 use aws_sdk_iam::types::{Policy, Role};
-use aws_sdk_sts;
+
 use aws_sdk_iam::error::SdkError;
-use aws_sdk_iam::operation::create_policy::{CreatePolicyError, CreatePolicyOutput};
+use aws_sdk_iam::operation::create_policy::{CreatePolicyError};
 use aws_smithy_runtime_api::client::orchestrator::HttpResponse;
 pub async fn check_role_exists(
 	config: Arc<aws_config::SdkConfig>,
@@ -14,7 +14,7 @@ pub async fn check_role_exists(
 	let iam = aws_sdk_iam::Client::new(&config);
 
 	// Create a request to get information about the role.
-	let get_role_request = iam.get_role().role_name(role_name).send().await?;
+	let _get_role_request = iam.get_role().role_name(role_name).send().await?;
 	// Attempt to get information about the role.
 	Ok(())
 }
@@ -42,18 +42,18 @@ pub async fn create_role(
 	// Configure the AWS region and create an IAM client.
 	let iam = aws_sdk_iam::Client::new(&config);
 
-	let strippedPolicy = &assume_role_policy_document.to_string();
+	let stripped_policy = &assume_role_policy_document.to_string();
 	let response = iam
 		.create_role()
 		.role_name(role_name)
-		.assume_role_policy_document(strippedPolicy)
+		.assume_role_policy_document(stripped_policy)
 		.send()
 		.await;
 	match response {
 		Ok(x) => Ok(x.role.unwrap()),
 		Err(e) => {
 			println!("create_role {:?}", e);
-			return Err(e);
+			Err(e)
 		}
 	}
 }

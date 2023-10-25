@@ -1,10 +1,8 @@
 use clap::{Parser};
 mod analyze;
-mod configure;
 mod config;
 mod analyzer;
 mod outputs;
-mod utils;
 
 // const
 const CARGO_PKG_NAME: &str = "isotope";

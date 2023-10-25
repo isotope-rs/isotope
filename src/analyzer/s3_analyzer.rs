@@ -1,13 +1,13 @@
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
-use crate::utils;
+
 use async_trait::async_trait;
 use colored::Colorize;
 use std::sync::Arc;
 use aws_sdk_s3;
-const role_name: &str = "DetectPublicS3BucketsRole";
-const policy_name: &str = "DetectPublicS3BucketsPolicy";
-const policy_document: &str = r#"{
+const ROLE_NAME: &str = "DetectPublicS3BucketsRole";
+const POLICY_NAME: &str = "DetectPublicS3BucketsPolicy";
+const POLICY_DOCUMENT: &str = r#"{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -21,7 +21,7 @@ const policy_document: &str = r#"{
     ]
 }
 "#;
-const assume_role_policy_document: &str = r#"{
+const ASSUME_ROLE_POLICY_DOCUMENT: &str = r#"{
     "Version": "2012-10-17",
     "Statement": [
         {
@@ -56,27 +56,27 @@ impl analyzer_trait::Analyzer for S3Analyzer {
        //  let c4 = Arc::clone(&self.config);
        //  let mut shouldCreate: bool = false;
        //  // Role ------------------------------------------------------------------------------------
-       //  match utils::iam::check_role_exists(c2, role_name).await {
-       //      Ok(x) => println!("Role {} exists", role_name),
+       //  match utils::iam::check_role_exists(c2, ROLE_NAME).await {
+       //      Ok(x) => println!("Role {} exists", ROLE_NAME),
        //      _ => {
        //          shouldCreate = true;
-       //          println!("Role {} does not exist", role_name)
+       //          println!("Role {} does not exist", ROLE_NAME)
        //      }
        //  }
        //  if shouldCreate {
-       //      let response = utils::iam::create_role(c3, role_name, assume_role_policy_document).await?;
+       //      let response = utils::iam::create_role(c3, ROLE_NAME, ASSUME_ROLE_POLICY_DOCUMENT).await?;
        //      println!(
        //          "Created role {} with ARN {}",
-       //          response.role_name.unwrap(),
+       //          response.ROLE_NAME.unwrap(),
        //          response.arn.unwrap()
        //      );
        //  }
        // // Policy ----------------------------------------------------------------------------------
-       //  let policy = utils::iam::create_policy(c4, policy_name, policy_document).await;
+       //  let policy = utils::iam::create_policy(c4, POLICY_NAME, POLICY_DOCUMENT).await;
        //  match policy {
        //      Ok(p) => println!("Created {:?}", p),
        //      Err(e) => {
-       //          println!("Error creating policy {} {}", policy_name, e);
+       //          println!("Error creating policy {} {}", POLICY_NAME, e);
        //      },
        //  }
         // -----------------------------------------------------------------------------------------
