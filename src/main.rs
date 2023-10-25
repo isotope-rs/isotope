@@ -1,7 +1,7 @@
-use clap::{Parser};
+use clap::Parser;
 mod analyze;
-mod config;
 mod analyzer;
+mod config;
 mod outputs;
 
 // const
@@ -17,12 +17,11 @@ pub struct Args {
     analyzer: Option<String>,
     #[arg(short, long)]
     verbose: bool,
-    #[arg(short,long)]
+    #[arg(short, long)]
     json: Option<bool>,
 }
 #[tokio::main]
 async fn main() {
-
     let args = Args::parse();
 
     analyze::run_analysis(&args).await;
