@@ -20,3 +20,6 @@ aws-sdk-macie = "0.33.0"
 v = "0.1.0"
 aws-sdk-config = "0.33.0"
 clap = { version = "4.4.6", features = ["derive"] }
+aws-sdk-sts = "0.33.0"
+aws-sdk-iam = "0.33.0"
+aws-smithy-runtime-api = { version = "0.56.1", features = ["client"] }

@@ -29,6 +29,9 @@ pub async fn run_analysis(args: &Args) {
             match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
+                    // Init analyzer
+                    x.run().await;
+
                     let response = x.run().await;
                     match response {
                         Some(respResults) => {
@@ -49,6 +52,10 @@ pub async fn run_analysis(args: &Args) {
             for current_analyzer in analyzers {
                 let thread_tx = tx.clone();
                 tasks.push(tokio::spawn(async move {
+
+                    // Init analyzer
+                    current_analyzer.init().await;
+
                     let response = current_analyzer.run().await;
                     match response {
                         Some(resp_results) => {
