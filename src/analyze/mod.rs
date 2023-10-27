@@ -3,9 +3,10 @@ use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
 use crate::{analyzer, Args};
 use crate::{config, outputs};
-use aws_config::meta::region::RegionProviderChain;
+use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
+use colored::Colorize;
 
 pub async fn run_analysis(args: &Args) {
     let mut conf: Conf = config::Conf {
@@ -19,6 +20,8 @@ pub async fn run_analysis(args: &Args) {
     // Setup available providers
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
+
+    println!("Current AWS region: {}", RegionProviderChain::default_provider().region().await.unwrap().as_ref().yellow());
     // Create channels
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
     let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
