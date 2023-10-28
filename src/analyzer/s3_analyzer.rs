@@ -89,7 +89,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                             == Some("http://acs.amazonaws.com/groups/global/AllUsers".to_string())
                         {
                             results.push(AnalysisResults{
-                                message: format!("Pubicly accessible S3 bucket {}", &bucket_name)
+                                message: format!("Publicly accessible S3 bucket {}", &bucket_name)
                             });
                         }
                     }
@@ -107,7 +107,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                                 for s in data.statement {
                                    if s.principal == "*" {
                                        results.push(AnalysisResults{
-                                           message: format!("Pubicly accessible S3 bucket {}", &bucket_name)
+                                           message: format!("Publicly accessible S3 bucket {}", &bucket_name)
                                        });
                                    }
                                 }
