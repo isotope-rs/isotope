@@ -8,6 +8,13 @@
 
 Isotope scans AWS services and makes suggestions on how to improve them using Artificial Intelligence.
 
+## Installation
+
+```
+cargo install isotope
+```
+
+
 ### Analyzers
 
 - S3
