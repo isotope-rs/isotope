@@ -1,8 +1,9 @@
 [package]
 name = "isotope"
-version = "0.1.0"
-edition = "2021"
-
+version = "0.0.1"
+edition = "2023"
+description = "Isotope scans AWS services and makes suggestions on how to improve them using Artificial Intelligence."
+license = "MIT"
 [profile.release]
 strip = true
 opt-level = "z"
