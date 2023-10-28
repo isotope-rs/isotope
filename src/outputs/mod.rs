@@ -30,7 +30,7 @@ impl Processor {
     }
     fn print_text(&self) {
         for elem in self.analysis_results.iter().filter(|&x| !x.message.is_empty()) {
-            println!("{:?}", elem.message);
+            println!("{}", elem.message);
         }
     }
 

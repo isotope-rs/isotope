@@ -4,6 +4,8 @@ mod analyzer;
 mod config;
 mod outputs;
 
+mod utils;
+
 // const
 const CARGO_PKG_NAME: &str = "isotope";
 const CARGO_PKG_DESCRIPTION: &str = "Isotope allows for the debugging of AWS services with AI";

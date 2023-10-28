@@ -1,7 +1,5 @@
-use std::collections::{BTreeMap, HashMap};
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
-use unescape::unescape;
 use async_trait::async_trait;
 use aws_sdk_s3;
 use colored::Colorize;
@@ -114,9 +112,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                             },
                             Err(e) => ()
                         }
-
-
-
                     }
                     Err(err) => ()
                 }
