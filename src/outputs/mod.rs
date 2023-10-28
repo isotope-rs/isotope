@@ -17,7 +17,7 @@ impl Processor {
         }
     }
 
-    pub fn print(&self) {
+    pub fn print(&mut self) {
         match &self.config {
             Some(x) => match x.json_output {
                 true => {
@@ -29,14 +29,14 @@ impl Processor {
         }
     }
     fn print_text(&self) {
-        self.analysis_results
-            .iter()
-            .for_each(|x| println!("{:?}", x.message));
+        for elem in self.analysis_results.iter().filter(|&x| !x.message.is_empty()) {
+            println!("{:?}", elem.message);
+        }
     }
 
-    fn print_json(&self) {
-        let v = serde_json::to_value(&self.analysis_results).unwrap();
-        print!("{:?}", v);
+    fn print_json(&mut self) {
+        self.analysis_results.retain(|x| !x.message.is_empty());
+        println!("{}", serde_json::to_string_pretty(&self.analysis_results).unwrap());
     }
 }
 

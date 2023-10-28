@@ -76,11 +76,11 @@ pub async fn run_analysis(args: &Args) {
             }
             match args.json {
                 Some(x) => {
-                    let p = outputs::Processor::new(results, Some(outputs::Configuration::new(x)));
+                    let mut p = outputs::Processor::new(results, Some(outputs::Configuration::new(x)));
                     p.print();
                 }
                 None => {
-                    let p = outputs::Processor::new(results, None);
+                    let mut p = outputs::Processor::new(results, None);
                     p.print();
                 }
             }
