@@ -5,7 +5,7 @@ use aws_sdk_s3;
 use colored::Colorize;
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};
-use serde_json::{Map, Value};
+use serde_json::{Value};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -70,7 +70,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
         );
         let mut results = vec![AnalysisResults {
             message: "".to_string(),
-            analyzer_name: self.get_name().
+            analyzer_name: self.get_name()
         }];
 
         let s3 = aws_sdk_s3::Client::new(&self.config);
@@ -113,10 +113,10 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                                    }
                                 }
                             },
-                            Err(e) => ()
+                            Err(_e) => ()
                         }
                     }
-                    Err(err) => ()
+                    Err(_err) => ()
                 }
             }
         }
@@ -125,6 +125,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
     }
 
     fn get_name(&self) -> String {
-        "s3".to_string()
+        "S3".to_string()
     }
 }

@@ -1,3 +1,4 @@
+use colored::Colorize;
 use crate::analyzer::types::AnalysisResults;
 
 pub struct Processor {
@@ -30,7 +31,7 @@ impl Processor {
     }
     fn print_text(&self) {
         for elem in self.analysis_results.iter().filter(|&x| !x.message.is_empty()) {
-            println!("{}", elem.message);
+            println!("{}:{}", elem.analyzer_name.blue(),elem.message.green());
         }
     }
 

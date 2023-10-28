@@ -28,7 +28,7 @@ pub async fn run_analysis(args: &Args) {
 
     match &args.analyzer {
         Some(analyzer_arg) => {
-            let filtered_analyzer = analyzers.iter().find(|x| x.get_name() == analyzer_arg);
+            let filtered_analyzer = analyzers.iter().find(|x| x.get_name().as_str() == analyzer_arg);
             match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
