@@ -141,7 +141,7 @@ jobs:
 
   publish-homebrew-formula:
     needs: [plan, should-publish]
-    runs-on: null
+    runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PLAN: ${{ needs.plan.outputs.val }}
