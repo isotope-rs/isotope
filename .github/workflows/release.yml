@@ -61,7 +61,7 @@ jobs:
         run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.4.0/cargo-dist-installer.sh | sh"
       - id: plan
         run: |
-          cargo dist plan --allow-dirty ${{ !github.event.pull_request && format('--tag={0}', github.ref_name) || '' }} --output-format=json > dist-manifest.json
+          cargo dist plan ${{ !github.event.pull_request && format('--tag={0}', github.ref_name) || '' }} --output-format=json > dist-manifest.json
           echo "cargo dist plan ran successfully"
           cat dist-manifest.json
           echo "manifest=$(jq -c "." dist-manifest.json)" >> "$GITHUB_OUTPUT"
@@ -129,10 +129,45 @@ jobs:
             ${{ steps.cargo-dist.outputs.paths }}
             ${{ env.BUILD_MANIFEST_NAME }}
 
+  # Build and package all the platform-agnostic(ish) things
+  upload-global-artifacts:
+    needs: [plan, upload-local-artifacts]
+    runs-on: "ubuntu-20.04"
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install cargo-dist
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.4.0/cargo-dist-installer.sh | sh"
+      # Get all the local artifacts for the global tasks to use (for e.g. checksums)
+      - name: Fetch local artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: artifacts
+          path: target/distrib/
+      - id: cargo-dist
+        shell: bash
+        run: |
+          cargo dist build ${{ needs.plan.outputs.tag-flag }} --output-format=json "--artifacts=global" > dist-manifest.json
+          echo "cargo dist ran successfully"
+
+          # Parse out what we just built and upload it to the Github Release™
+          echo "paths<<EOF" >> "$GITHUB_OUTPUT"
+          jq --raw-output ".artifacts[]?.path | select( . != null )" dist-manifest.json >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+      - name: "Upload artifacts"
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: ${{ steps.cargo-dist.outputs.paths }}
+
   should-publish:
     needs:
       - plan
       - upload-local-artifacts
+      - upload-global-artifacts
     if: ${{ needs.plan.outputs.publishing == 'true' }}
     runs-on: ubuntu-latest
     steps:
@@ -141,17 +176,17 @@ jobs:
 
   publish-homebrew-formula:
     needs: [plan, should-publish]
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-20.04"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PLAN: ${{ needs.plan.outputs.val }}
-      GITHUB_USER: "AlexsJones"
-      GITHUB_EMAIL: "alexsimonjones@gmail.com"
+      GITHUB_USER: "axo bot"
+      GITHUB_EMAIL: "admin+bot@axo.dev"
     if: ${{ !fromJson(needs.plan.outputs.val).announcement_is_prerelease || fromJson(needs.plan.outputs.val).publish_prereleases }}
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: "isotope-rs/isotope"
+          repository: "isotope-rs/homebrew-isotope"
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
       # So we have access to the formula
       - name: Fetch local artifacts

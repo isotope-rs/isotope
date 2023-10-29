@@ -1,6 +1,7 @@
 [package]
 name = "isotope"
 version = "0.0.1"
+repository = "https://github.com/isotope-rs/isotope.git"
 edition = "2021"
 description = "Isotope scans AWS services and makes suggestions on how to improve them using Artificial Intelligence."
 license = "MIT"
@@ -13,6 +14,7 @@ codegen-units = 1
 [profile.dist]
 inherits = "release"
 lto = "thin"
+split-debuginfo = "packed"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -38,10 +40,15 @@ unescape = "0.1.0"
 [workspace.metadata.dist]
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
 cargo-dist-version = "0.4.0"
+# CI backends to support
 ci = ["github"]
 # The installers to generate for each app
-installers = []
-tap = "isotope-rs/isotope"
-publish-jobs = ["homebrew"]
+installers = ["homebrew"]
+# A GitHub repo to push Homebrew formulas to
+tap = "isotope-rs/homebrew-isotope"
+# Publish jobs to run in CI
+publish-jobs = ["homebrew", "homebrew"]
 # Target platforms to build apps for (Rust target-triple syntax)
 targets = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-pc-windows-msvc"]
+# Publish jobs to run in CI
+pr-run-mode = "plan"
