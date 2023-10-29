@@ -8,6 +8,11 @@ license = "MIT"
 strip = true
 opt-level = "z"
 codegen-units = 1
+
+# The profile that 'cargo dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -28,3 +33,15 @@ aws-sdk-sts = "0.33.0"
 aws-sdk-iam = "0.33.0"
 aws-smithy-runtime-api = { version = "0.56.1", features = ["client"] }
 unescape = "0.1.0"
+
+# Config for 'cargo dist'
+[workspace.metadata.dist]
+# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
+cargo-dist-version = "0.4.0"
+ci = ["github"]
+# The installers to generate for each app
+installers = []
+tap = "isotope-rs/isotope"
+publish-jobs = ["homebrew"]
+# Target platforms to build apps for (Rust target-triple syntax)
+targets = ["x86_64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-pc-windows-msvc"]
