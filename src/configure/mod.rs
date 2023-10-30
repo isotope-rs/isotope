@@ -19,8 +19,7 @@ pub fn add_commands() -> Command {
             .action(run_configure))
         .command(Command::new("get")
             .description("isotope config get")
-            .usage("config get")
-            .action(show_configure))
+            .usage("config get").action(show_configure))
 }
 fn show_configure(_context: &Context) {
     let c = config::get_or_create_config();

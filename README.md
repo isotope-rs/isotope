@@ -11,7 +11,7 @@ Isotope scans AWS services and makes suggestions on how to improve them using Ar
 ## Installation
 
 ```
-cargo install isotope
+brew install isotope-rs/homebrew-isotope/isotope
 ```
 
 
@@ -21,4 +21,7 @@ cargo install isotope
     - Public bucket detection
 - STS
   - MFA detection
+
+
+
 
