@@ -1,7 +1,7 @@
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
-use crate::{analyzer, Args};
+use crate::{analyzer, Args, bedrock};
 use crate::{config, outputs};
 use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use std::sync::mpsc;
@@ -20,6 +20,8 @@ pub async fn run_analysis(args: &Args) {
     // Setup available providers
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
+    // Setup bedrock
+    let bedrockClient = bedrock::BedrockClient::new(config.clone());
 
     println!("Current AWS region: {}", RegionProviderChain::default_provider().region().await.unwrap().as_ref().yellow());
     // Create channels

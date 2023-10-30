@@ -6,7 +6,12 @@
 
 # Isotope
 
-Isotope scans AWS services and makes suggestions on how to improve them using Artificial Intelligence.
+Isotope scans AWS services and makes suggestions on how to improve them using AWS Bedrock (Artificial Intelligence).
+
+## Key benefits
+- No exfiltration of data beyond your AWS account 
+- Discrete examination of your services within AWS
+- Simplistic remediation steps designed for humans.
 
 ## Installation
 
@@ -14,6 +19,25 @@ Isotope scans AWS services and makes suggestions on how to improve them using Ar
 brew install isotope-rs/homebrew-isotope/isotope
 ```
 
+## Usage
+
+1. Set environment variables for AWS access
+
+```
+export AWS_ACCESS_KEY=""
+export AWS_SECRET_ACCESS_KEY=""
+```
+2. Run all isotope analyzers
+
+```
+isotope 
+```
+
+Optionally for a single analyzer
+
+```
+isotope -a S3
+```
 
 ### Analyzers
 

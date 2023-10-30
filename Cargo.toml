@@ -35,6 +35,7 @@ aws-sdk-sts = "0.33.0"
 aws-sdk-iam = "0.33.0"
 aws-smithy-runtime-api = { version = "0.56.1", features = ["client"] }
 unescape = "0.1.0"
+aws-sdk-bedrock = "0.3.0"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
