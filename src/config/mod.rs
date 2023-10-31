@@ -1,3 +1,6 @@
+mod cache;
+
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use simple_home_dir::*;
 use std::error::Error;
@@ -7,9 +10,12 @@ use std::path::Path;
 
 pub const CONFFILE: &str = "isotope.config";
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Conf {
     pub cloud: String,
+    // This is stored as a hashed string representing the issue e.g. S3 bucket public
+    // With a subsequent value (also b64 encoded)
+    pub stored_advice: HashMap<String,String>
 }
 pub fn get_conf_path() -> String {
     let home = home_dir().unwrap();
@@ -33,6 +39,7 @@ pub fn get_or_create_config() -> Result<Conf, Box<dyn Error>> {
     let p = get_conf_path();
     let c = Conf {
         cloud: String::new(),
+        stored_advice: HashMap::new(),
     };
     if !Path::new(&p).exists() {
         let mut f = File::create(&p)?;

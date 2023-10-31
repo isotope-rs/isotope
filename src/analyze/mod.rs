@@ -1,19 +1,20 @@
-use std::collections::hash_map::Entry;
-use std::collections::HashMap;
-use std::ops::DerefMut;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
-use crate::{analyzer, Args, bedrock};
+use crate::{analyzer, bedrock, Args};
 use crate::{config, outputs};
 use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
+use colored::Colorize;
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
+use std::ops::DerefMut;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
-use colored::Colorize;
 
 pub async fn run_analysis(args: &Args) {
     let mut conf: Conf = config::Conf {
         cloud: String::new(),
+        stored_advice: HashMap::new(),
     };
     let c = config::get_or_create_config();
     match c {
@@ -26,14 +27,24 @@ pub async fn run_analysis(args: &Args) {
     // Setup bedrock
     let bedrockClient = bedrock::BedrockClient::new(config.clone());
 
-    println!("Current AWS region: {}", RegionProviderChain::default_provider().region().await.unwrap().as_ref().yellow());
+    println!(
+        "Current AWS region: {}",
+        RegionProviderChain::default_provider()
+            .region()
+            .await
+            .unwrap()
+            .as_ref()
+            .yellow()
+    );
     // Create channels
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
     let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
 
     match &args.analyzer {
         Some(analyzer_arg) => {
-            let filtered_analyzer = &analyzers.iter().find(|x| x.get_name().as_str() == analyzer_arg);
+            let filtered_analyzer = &analyzers
+                .iter()
+                .find(|x| x.get_name().as_str() == analyzer_arg);
             match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
@@ -80,39 +91,50 @@ pub async fn run_analysis(args: &Args) {
                 task.await.unwrap();
             }
 
-            let mut processed_results: HashMap<String,Vec<AnalysisResults>> = HashMap::new();
+            let mut processed_results: HashMap<String, Vec<AnalysisResults>> = HashMap::new();
             // generate Vectors aligned to each analyzer type
-
             // Feed results into Bedrock
             for mut res in results {
                 if !res.message.is_empty() {
-                    let result = bedrockClient.enrich(res.message.clone()).await;
-                    // TODO: missing step to copy the bedrock result into res
-                    match result {
-                        Ok(x) => {
-                            res.advice = x.clone();
-                            // pass ownership over of advice
-                            // check if the processed results analyzer exists as key
-                            // upsert the analysis result into the vector
-                            match processed_results.entry(x) {
-                                Entry::Occupied(mut e) => {
-                                    e.get_mut().push(res);
-                                },
-                                Entry::Vacant(e) => {
-                                    e.insert(vec![res]);
-                                },
-                            }
+                    // Check if the data is in the cache
+                    match conf.fetch_from_cache(&res.message) {
+                        Some(x) => {
+                            res.advice = x.clone()
                         },
-                        Err(e) => (
+                        None => {
+                            let result = bedrockClient.enrich(res.message.clone()).await;
+                            // TODO: missing step to copy the bedrock result into res
+                            match result {
+                                Ok(x) => {
+                                    res.advice = x.clone();
+                                    // upsert into the cache for next time
+                                    conf.clone().upsert_into_cache(&res.message,&x);
+                                    // pass ownership over of advice
+                                    // check if the processed results analyzer exists as key
+                                    // upsert the analysis result into the vector
 
-                        ),
+                                }
+                                Err(e) => (),
+                            }
+                        }
+                    }
+                    match processed_results.entry(res.analyzer_name.clone()) {
+                        Entry::Occupied(mut e) => {
+                            e.get_mut().push(res);
+                        }
+                        Entry::Vacant(e) => {
+                            e.insert(vec![res]);
+                        }
                     }
                 }
             }
-            //
+
             match args.json {
                 Some(x) => {
-                    let mut p = outputs::Processor::new(processed_results, Some(outputs::Configuration::new(x)));
+                    let mut p = outputs::Processor::new(
+                        processed_results,
+                        Some(outputs::Configuration::new(x)),
+                    );
                     p.print();
                 }
                 None => {

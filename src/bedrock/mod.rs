@@ -8,6 +8,7 @@ use std::io::{stdout, Write};
 use aws_sdk_config::config::Region;
 
 mod prompt;
+
 #[derive(Serialize)]
 struct ClaudParams {
 	prompt: String,
