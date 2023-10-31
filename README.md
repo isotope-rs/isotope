@@ -26,6 +26,8 @@ brew install isotope-rs/homebrew-isotope/isotope
 ```
 export AWS_ACCESS_KEY=""
 export AWS_SECRET_ACCESS_KEY=""
+export BEDROCK_REGION="eu-central-1"  ( e.g. us-east-1,us-west-2, ap-southeast-1, ap-northeast-1 )
+export BEDROCK_MODEL="anthropic.claude-v2" ( e.g. anthropic.claude-v2, anthropic.claude-v1, anthropic.claude-instant-v1 )
 ```
 2. Run all isotope analyzers
 

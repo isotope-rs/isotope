@@ -76,13 +76,28 @@ pub async fn run_analysis(args: &Args) {
             for task in tasks {
                 task.await.unwrap();
             }
+
+            let mut processed_results: Vec<String> = vec![];
+            // Feed results into Bedrock
+            for res in results.clone() {
+                if !res.message.is_empty() {
+                    let result = bedrockClient.enrich(res.message).await;
+                    match result {
+                        Ok(x) => (
+                            processed_results.push(x)
+                        ),
+                        Err(e) => println!("{}", e)
+                    }
+                }
+            }
+            //
             match args.json {
                 Some(x) => {
-                    let mut p = outputs::Processor::new(results, Some(outputs::Configuration::new(x)));
+                    let mut p = outputs::Processor::new(processed_results, Some(outputs::Configuration::new(x)));
                     p.print();
                 }
                 None => {
-                    let mut p = outputs::Processor::new(results, None);
+                    let mut p = outputs::Processor::new(processed_results, None);
                     p.print();
                 }
             }
