@@ -1,8 +1,9 @@
+use std::collections::HashMap;
 use colored::Colorize;
 use crate::analyzer::types::AnalysisResults;
 
 pub struct Processor {
-    analysis_results: Vec<String>,
+    analysis_results: HashMap<String,Vec<AnalysisResults>>,
     config: Option<Configuration>,
 }
 
@@ -11,7 +12,7 @@ pub struct Configuration {
 }
 
 impl Processor {
-    pub fn new(analysis_results: Vec<String>, config: Option<Configuration>) -> Self {
+    pub fn new(analysis_results: HashMap<String,Vec<AnalysisResults>>, config: Option<Configuration>) -> Self {
         Self {
             analysis_results,
             config,
@@ -30,13 +31,15 @@ impl Processor {
         }
     }
     fn print_text(&self) {
-        for elem in self.analysis_results.iter().filter(|&x| !x.is_empty()) {
-            println!("{}:{}", elem.blue(),elem.green());
+        for (key, value) in &self.analysis_results {
+            for results in value.iter() {
+                println!("{}",results.message.blue());
+                println!("{}",results.advice.green())
+            }
         }
     }
 
     fn print_json(&mut self) {
-        self.analysis_results.retain(|x| !x.is_empty());
         println!("{}", serde_json::to_string_pretty(&self.analysis_results).unwrap());
     }
 }

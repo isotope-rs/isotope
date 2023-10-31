@@ -70,7 +70,8 @@ impl analyzer_trait::Analyzer for S3Analyzer {
         );
         let mut results = vec![AnalysisResults {
             message: "".to_string(),
-            analyzer_name: self.get_name()
+            analyzer_name: self.get_name(),
+            advice: "".to_string()
         }];
 
         let s3 = aws_sdk_s3::Client::new(&self.config);
@@ -89,7 +90,8 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                         {
                             results.push(AnalysisResults{
                                 message: format!("Publicly accessible S3 bucket {}", &bucket_name),
-                                analyzer_name: self.get_name()
+                                analyzer_name: self.get_name(),
+                                advice: "".to_string()
                             });
                         }
                     }
@@ -108,7 +110,8 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                                    if s.principal == "*" {
                                        results.push(AnalysisResults{
                                            message: format!("Publicly accessible S3 bucket {}", &bucket_name),
-                                           analyzer_name: self.get_name()
+                                           analyzer_name: self.get_name(),
+                                           advice: "".to_string()
                                        });
                                    }
                                 }

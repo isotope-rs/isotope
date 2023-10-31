@@ -20,7 +20,8 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
 
 	    let mut results = vec![AnalysisResults {
 		    message: "".to_string(),
-            analyzer_name: "".to_string()
+            analyzer_name: "".to_string(),
+            advice: "".to_string()
 	    }];
         let iam = aws_sdk_iam::Client::new(&self.config.clone());
         let list_users_response = iam.list_users().send().await;
@@ -35,7 +36,8 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
             if mfa_devices.is_empty() {
                 results.push(AnalysisResults{
 	               message: format!("MFA is not enabled for user {}", username),
-                   analyzer_name: self.get_name()
+                   analyzer_name: self.get_name(),
+                    advice: "".to_string()
                 });
             }
         }

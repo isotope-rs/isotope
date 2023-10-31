@@ -1,3 +1,6 @@
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
+use std::ops::DerefMut;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
@@ -30,7 +33,7 @@ pub async fn run_analysis(args: &Args) {
 
     match &args.analyzer {
         Some(analyzer_arg) => {
-            let filtered_analyzer = analyzers.iter().find(|x| x.get_name().as_str() == analyzer_arg);
+            let filtered_analyzer = &analyzers.iter().find(|x| x.get_name().as_str() == analyzer_arg);
             match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
@@ -77,16 +80,32 @@ pub async fn run_analysis(args: &Args) {
                 task.await.unwrap();
             }
 
-            let mut processed_results: Vec<String> = vec![];
+            let mut processed_results: HashMap<String,Vec<AnalysisResults>> = HashMap::new();
+            // generate Vectors aligned to each analyzer type
+
             // Feed results into Bedrock
-            for res in results.clone() {
+            for mut res in results {
                 if !res.message.is_empty() {
-                    let result = bedrockClient.enrich(res.message).await;
+                    let result = bedrockClient.enrich(res.message.clone()).await;
+                    // TODO: missing step to copy the bedrock result into res
                     match result {
-                        Ok(x) => (
-                            processed_results.push(x)
+                        Ok(x) => {
+                            res.advice = x.clone();
+                            // pass ownership over of advice
+                            // check if the processed results analyzer exists as key
+                            // upsert the analysis result into the vector
+                            match processed_results.entry(x) {
+                                Entry::Occupied(mut e) => {
+                                    e.get_mut().push(res);
+                                },
+                                Entry::Vacant(e) => {
+                                    e.insert(vec![res]);
+                                },
+                            }
+                        },
+                        Err(e) => (
+
                         ),
-                        Err(e) => println!("{}", e)
                     }
                 }
             }
