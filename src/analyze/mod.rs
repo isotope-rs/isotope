@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 
-pub async fn run_analysis(args: &Args) {
+pub async fn run_analysis(selected_analyzer: &Option<String>, enable_json: &bool, explain: &bool) {
     let mut conf: Conf = config::Conf {
         cloud: String::new(),
         stored_advice: HashMap::new(),
@@ -40,7 +40,7 @@ pub async fn run_analysis(args: &Args) {
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
     let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
 
-    match &args.analyzer {
+    match selected_analyzer {
         Some(analyzer_arg) => {
             let filtered_analyzer = &analyzers
                 .iter()
@@ -126,15 +126,15 @@ pub async fn run_analysis(args: &Args) {
                 }
             }
 
-            if args.json {
+            if *enable_json {
                 let mut p = outputs::Processor::new(
                     processed_results,
-                    Some(outputs::Configuration::new(args.json)),
-                    args.explain,
+                    Some(outputs::Configuration::new(*enable_json)),
+                    *explain,
                 );
                 p.print();
             } else {
-                let mut p = outputs::Processor::new(processed_results, None, args.explain);
+                let mut p = outputs::Processor::new(processed_results, None, *explain);
                 p.print();
             }
         }

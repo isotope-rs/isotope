@@ -17,7 +17,7 @@ Isotope scans AWS services and makes suggestions on how to improve them using AW
 ### Example
 
 ```
-❯ isotope --explain=true
+❯ isotope analze --explain
 Current AWS region: eu-west-2
 Running STS analyzer
 Running S3 analyzer
@@ -54,13 +54,13 @@ export BEDROCK_REGION="eu-central-1"  ( e.g. us-east-1,us-west-2, ap-southeast-1
 2. Run all isotope analyzers
 
 ```
-isotope 
+isotope analyze
 ```
 
 Optionally for a single analyzer
 
 ```
-isotope -a S3
+isotope analyze -a S3
 ```
 
 ### Analyzers
