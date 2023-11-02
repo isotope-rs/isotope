@@ -26,7 +26,7 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
 					match dbs.publicly_accessible {
 						Some(x) => {
 							results.push(AnalysisResults{
-								message: format!("Publicly accessible RDS instance {}",dbs.db_name.clone().unwrap()),
+								message: format!("Publicly accessible RDS instance {}",dbs.db_instance_identifier.clone().unwrap()),
 								advice: "".to_string(),
 								analyzer_name: self.get_name()
 							})
