@@ -1,7 +1,7 @@
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
-use aws_sdk_s3;
+
 use colored::Colorize;
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};

@@ -1,10 +1,10 @@
 use std::env;
 use std::error::Error;
-use aws_config::{ConfigLoader, SdkConfig};
+use aws_config::{SdkConfig};
 use aws_sdk_bedrockruntime::primitives::Blob;
-use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
+use aws_config::meta::region::{ProvideRegion};
 use serde::{Deserialize, Serialize};
-use std::io::{stdout, Write};
+
 use aws_sdk_config::config::Region;
 
 mod prompt;
@@ -28,9 +28,9 @@ impl ClaudParams {
 	}
 }
 
-impl Into<Blob> for ClaudParams {
-	fn into(self) -> Blob {
-		Blob::new(serde_json::to_string(&self).unwrap())
+impl From<ClaudParams> for Blob {
+	fn from(val: ClaudParams) -> Self {
+		Blob::new(serde_json::to_string(&val).unwrap())
 	}
 }
 pub struct BedrockClient {
@@ -41,7 +41,7 @@ impl BedrockClient {
 	pub fn new(config: SdkConfig) -> Self {
 
 		Self{
-			config: config
+			config
 		}
 	}
 	pub async fn enrich(&self, prompt: String) -> Result<String,Box<dyn Error>> {
@@ -57,7 +57,7 @@ impl BedrockClient {
 
 		let question = format!("{} {}",prompt::DEFAULT_PROMPT, prompt.as_str());
 
-		let mut response = client
+		let response = client
 			.invoke_model()
 			.model_id(bedrock_model)
 			.content_type("application/json")

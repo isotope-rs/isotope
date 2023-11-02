@@ -66,9 +66,11 @@ isotope -a S3
 ### Analyzers
 
 - S3
-    - Public bucket detection
+  - Public bucket detection
 - STS
   - MFA detection
+- RDS
+  - Public instance detection
 
 
 

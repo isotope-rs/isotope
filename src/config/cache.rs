@@ -1,7 +1,7 @@
 use std::error::Error;
-use std::io::Bytes;
+
 use crate::config::{Conf, save_config};
-use base64::{Engine as _, engine::{self, general_purpose}, alphabet};
+use base64::{Engine as _, engine::{general_purpose}};
 
 impl Conf {
 	fn encode_cache_key(&self,raw_cache_key: &str) -> String {
@@ -31,9 +31,9 @@ impl Conf {
 		}
 
 		let mut found = String::new();
-		let decoded_bytes = match general_purpose::STANDARD.decode(found_keys.first().unwrap().to_string()) {
+		match general_purpose::STANDARD.decode(found_keys.first().unwrap()) {
 			Ok(bytes) => {
-				let decoded_string = match String::from_utf8(bytes) {
+				match String::from_utf8(bytes) {
 					Ok(s) => found = s,
 					Err(e) => {
 						eprintln!("Error converting bytes to String: {}", e);

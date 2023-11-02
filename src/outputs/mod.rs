@@ -33,7 +33,7 @@ impl Processor {
         }
     }
     fn print_text(&self) {
-        for (key, value) in &self.analysis_results {
+        for (_key, value) in &self.analysis_results {
             for results in value.iter() {
                 println!("{}",results.message.blue());
                 if self.explain {

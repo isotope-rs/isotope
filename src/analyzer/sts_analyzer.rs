@@ -2,7 +2,7 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 
 use async_trait::async_trait;
-use aws_sdk_iam;
+
 use colored::Colorize;
 use std::sync::Arc;
 pub struct STSAnalyzer {

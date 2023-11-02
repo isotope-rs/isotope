@@ -7,7 +7,7 @@ use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use colored::Colorize;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-use std::ops::DerefMut;
+
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 
@@ -98,9 +98,7 @@ pub async fn run_analysis(args: &Args) {
                 if !res.message.is_empty() {
                     // Check if the data is in the cache
                     match conf.fetch_from_cache(&res.message) {
-                        Some(x) => {
-                            res.advice = x.clone()
-                        },
+                        Some(x) => res.advice = x.clone(),
                         None => {
                             let result = bedrockClient.enrich(res.message.clone()).await;
                             // TODO: missing step to copy the bedrock result into res
@@ -108,13 +106,12 @@ pub async fn run_analysis(args: &Args) {
                                 Ok(x) => {
                                     res.advice = x.clone();
                                     // upsert into the cache for next time
-                                    conf.clone().upsert_into_cache(&res.message,&x);
+                                    conf.clone().upsert_into_cache(&res.message, &x);
                                     // pass ownership over of advice
                                     // check if the processed results analyzer exists as key
                                     // upsert the analysis result into the vector
-
                                 }
-                                Err(e) => (),
+                                Err(_e) => (),
                             }
                         }
                     }
@@ -130,17 +127,16 @@ pub async fn run_analysis(args: &Args) {
             }
 
             if args.json {
-                    let mut p = outputs::Processor::new(
-                        processed_results,
-                        Some(outputs::Configuration::new(args.json)),
-                        args.explain,
-                    );
-                    p.print();
-                } else {
-                    let mut p = outputs::Processor::new(processed_results, None,args.explain);
-                    p.print();
-                }
-
+                let mut p = outputs::Processor::new(
+                    processed_results,
+                    Some(outputs::Configuration::new(args.json)),
+                    args.explain,
+                );
+                p.print();
+            } else {
+                let mut p = outputs::Processor::new(processed_results, None, args.explain);
+                p.print();
+            }
         }
     }
 }
