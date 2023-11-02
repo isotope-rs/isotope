@@ -8,7 +8,7 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::path::Path;
 
-pub const CONFFILE: &str = "isotope.config";
+pub const CONFFILE: &str = ".isotope.config";
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Conf {

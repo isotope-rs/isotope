@@ -129,19 +129,18 @@ pub async fn run_analysis(args: &Args) {
                 }
             }
 
-            match args.json {
-                Some(x) => {
+            if args.json {
                     let mut p = outputs::Processor::new(
                         processed_results,
-                        Some(outputs::Configuration::new(x)),
+                        Some(outputs::Configuration::new(args.json)),
+                        args.explain,
                     );
                     p.print();
-                }
-                None => {
-                    let mut p = outputs::Processor::new(processed_results, None);
+                } else {
+                    let mut p = outputs::Processor::new(processed_results, None,args.explain);
                     p.print();
                 }
-            }
+
         }
     }
 }

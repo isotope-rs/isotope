@@ -11,17 +11,19 @@ mod bedrock;
 const CARGO_PKG_NAME: &str = "isotope";
 const CARGO_PKG_DESCRIPTION: &str = "Isotope allows for the debugging of AWS services with AI";
 const CARGO_PKG_AUTHORS: &str = "AlexsJones";
-const CARGO_PKG_VERSION: &str = "0.0.2";
+const CARGO_PKG_VERSION: &str = "0.0.3";
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
-    #[arg(short, long)]
+    #[arg(short, long, long_help="Select a single analyzer")]
     analyzer: Option<String>,
-    #[arg(short, long)]
-    verbose: bool,
-    #[arg(short, long)]
-    json: Option<bool>,
+    #[arg(short, long, long_help="Enable debug logging")]
+    debug: bool,
+    #[arg(short, long, long_help="Print out results in JSON format")]
+    json: bool,
+    #[arg(short,long, long_help="Use Bedrock AI to assist in remediation of issues")]
+    explain: bool,
 }
 #[tokio::main]
 async fn main() {

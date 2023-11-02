@@ -5,6 +5,7 @@ use crate::analyzer::types::AnalysisResults;
 pub struct Processor {
     analysis_results: HashMap<String,Vec<AnalysisResults>>,
     config: Option<Configuration>,
+    explain: bool
 }
 
 pub struct Configuration {
@@ -12,10 +13,11 @@ pub struct Configuration {
 }
 
 impl Processor {
-    pub fn new(analysis_results: HashMap<String,Vec<AnalysisResults>>, config: Option<Configuration>) -> Self {
+    pub fn new(analysis_results: HashMap<String,Vec<AnalysisResults>>, config: Option<Configuration>, explain: bool) -> Self {
         Self {
             analysis_results,
             config,
+            explain
         }
     }
 
@@ -34,7 +36,9 @@ impl Processor {
         for (key, value) in &self.analysis_results {
             for results in value.iter() {
                 println!("{}",results.message.blue());
-                println!("{}",results.advice.green())
+                if self.explain {
+                    println!("{}", results.advice.green())
+                }
             }
         }
     }
