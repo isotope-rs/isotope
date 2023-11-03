@@ -3,10 +3,8 @@ mod analyze;
 mod analyzer;
 mod config;
 mod outputs;
-
 mod utils;
 mod bedrock;
-
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
