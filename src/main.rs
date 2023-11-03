@@ -14,6 +14,10 @@ pub struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// List analyzers
+    List {
+
+    },
     /// Run AWS account analysis
     Analyze {
         #[arg(short, long, long_help="Select a single analyzer")]
@@ -34,7 +38,10 @@ async fn main() {
         Some(Commands::Analyze { analyzer, debug: _, json, explain}) => {
 
             analyze::run_analysis(analyzer,json,explain).await;
-        }
+        },
+        Some(Commands::List {}) => {
+            analyze::list_analyzers().await;
+        },
         None => {
 
         }

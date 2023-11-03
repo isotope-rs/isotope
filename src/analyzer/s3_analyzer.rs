@@ -128,6 +128,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
     }
 
     fn get_name(&self) -> String {
-        "S3".to_string()
+        "s3".to_string()
     }
 }

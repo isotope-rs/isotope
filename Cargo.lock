@@ -1167,7 +1167,7 @@ dependencies = [
 
 [[package]]
 name = "isotope"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "async-trait",
  "aws-config",

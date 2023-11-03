@@ -10,8 +10,20 @@ use std::collections::HashMap;
 
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
+use std::error::Error;
 
-pub async fn run_analysis(selected_analyzer: &Option<String>, enable_json: &bool, explain: &bool) {
+pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
+    // Setup available providers
+    let region_provider = RegionProviderChain::default_provider();
+    let config = aws_config::from_env().region(region_provider).load().await;
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
+    println!("Analyzers");
+    for analyzer in analyzers {
+        println!("> {}",analyzer.get_name());
+    }
+    Ok(())
+}
+pub async fn run_analysis(selected_analyzer: &Option<String>, enable_json: &bool, explain: &bool) -> Result<(), Box<dyn Error>>{
     let mut conf: Conf = config::Conf {
         cloud: String::new(),
         stored_advice: HashMap::new(),
@@ -139,4 +151,5 @@ pub async fn run_analysis(selected_analyzer: &Option<String>, enable_json: &bool
             }
         }
     }
+    Ok(())
 }
