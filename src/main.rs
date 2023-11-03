@@ -40,11 +40,10 @@ async fn main() {
     match &args.command {
         Some(Commands::Analyze { analyzer, debug, json, explain}) => {
 
-
             analyze::run_analysis(analyzer,json,explain).await;
         }
         None => {
-            println!("Default subcommand");
+
         }
     }
 
