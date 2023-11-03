@@ -7,11 +7,6 @@ mod outputs;
 mod utils;
 mod bedrock;
 
-// const
-const CARGO_PKG_NAME: &str = "isotope";
-const CARGO_PKG_DESCRIPTION: &str = "Isotope allows for the debugging of AWS services with AI";
-const CARGO_PKG_AUTHORS: &str = "AlexsJones";
-const CARGO_PKG_VERSION: &str = "0.0.3";
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
