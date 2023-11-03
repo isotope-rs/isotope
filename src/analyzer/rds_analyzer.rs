@@ -24,7 +24,7 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
 			for vdbs in dbinstances.db_instances.iter() {
 				for dbs in vdbs.iter() {
 					match dbs.publicly_accessible {
-						Some(x) => {
+						Some(_x) => {
 							results.push(AnalysisResults{
 								message: format!("Publicly accessible RDS instance {}",dbs.db_instance_identifier.clone().unwrap()),
 								advice: "".to_string(),

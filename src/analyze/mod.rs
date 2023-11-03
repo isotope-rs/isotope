@@ -1,7 +1,7 @@
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
-use crate::{analyzer, bedrock, Args};
+use crate::{analyzer, bedrock};
 use crate::{config, outputs};
 use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use colored::Colorize;

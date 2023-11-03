@@ -38,7 +38,7 @@ async fn main() {
     let args = Args::parse();
 
     match &args.command {
-        Some(Commands::Analyze { analyzer, debug, json, explain}) => {
+        Some(Commands::Analyze { analyzer, debug: _, json, explain}) => {
 
             analyze::run_analysis(analyzer,json,explain).await;
         }
