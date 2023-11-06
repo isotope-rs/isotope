@@ -3,7 +3,7 @@ use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_ec2;
-use aws_sdk_rds;
+
 use colored::Colorize;
 
 pub struct EbsAnalyzer {
@@ -21,7 +21,7 @@ impl analyzer_trait::Analyzer for EbsAnalyzer {
         );
         let mut results = Vec::new();
         // TODO: Weird idiosyncrasy of the EC2 client
-        let mut config = aws_types::sdk_config::SdkConfig::builder().build();
+        let config = aws_types::sdk_config::SdkConfig::builder().build();
 
         let ec2 = aws_sdk_ec2::Client::new(&config);
 

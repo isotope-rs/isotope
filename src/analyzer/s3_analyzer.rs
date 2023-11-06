@@ -6,7 +6,7 @@ use crate::analyzer::analyzer_trait::Analyzer;
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::sync::Arc;
+
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

@@ -37,7 +37,7 @@ pub async fn run_analysis(
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
     // Setup bedrock
-    let bedrockClient = bedrock::BedrockClient::new(config.clone());
+    let bedrock_client = bedrock::BedrockClient::new(config.clone());
 
     println!(
         "Current AWS region: {}",
@@ -112,7 +112,7 @@ pub async fn run_analysis(
                     match conf.fetch_from_cache(&res.message) {
                         Some(x) => res.advice = x.clone(),
                         None => {
-                            let result = bedrockClient.enrich(res.message.clone()).await;
+                            let result = bedrock_client.enrich(res.message.clone()).await;
                             // TODO: missing step to copy the bedrock result into res
                             match result {
                                 Ok(x) => {

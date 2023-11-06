@@ -4,7 +4,7 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_rds;
 use colored::Colorize;
-use std::sync::Arc;
+
 
 pub struct RDSAnalyzer {
     pub config: aws_config::SdkConfig,

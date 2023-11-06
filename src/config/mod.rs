@@ -70,22 +70,22 @@ fn config_test() {
 }
 
 #[test]
+
 fn write_read_config_test() {
     let k = "gamma";
     let v = "epsilon";
     let mut conf: Conf = Conf::new();
-
     if let Ok(c) = get_or_create_config() {
         conf = c
     }
     conf = conf.upsert_into_cache(k, v);
     match conf.fetch_from_cache(k) {
         Some(x) => {
-            conf.remove_from_cache(k);
+            let _ = conf.remove_from_cache(k);
             assert_eq!(x, v);
         }
         None => {
-            conf.remove_from_cache(k);
+            let _ = conf.remove_from_cache(k);
             assert_ne!(0, 0);
         }
     }

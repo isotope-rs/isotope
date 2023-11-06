@@ -1,5 +1,5 @@
 use crate::analyzer::analyzer_trait::Analyzer;
-use std::sync::Arc;
+
 
 pub mod analyzer_trait;
 mod ebs_analyzer;

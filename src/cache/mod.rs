@@ -1,4 +1,4 @@
-use crate::config;
+
 use crate::config::{get_or_create_config, Conf};
 use base64::engine::general_purpose;
 use base64::Engine;
@@ -31,14 +31,14 @@ pub async fn list() -> Result<(), Box<dyn Error>> {
                             Ok(c) => {
                                 println!("{}", c.blue());
                             }
-                            Err(e) => (),
+                            Err(_e) => (),
                         },
-                        b => (),
+                        _b => (),
                     }
                 }
-                Err(e) => (),
+                Err(_e) => (),
             },
-            Err(e) => (),
+            Err(_e) => (),
         }
     }
     Ok(())

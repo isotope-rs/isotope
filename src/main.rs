@@ -51,13 +51,16 @@ async fn main() {
             json,
             explain,
         }) => {
+            #[warn(unused_must_use)]
             analyze::run_analysis(analyzer, json, explain).await;
         }
         Some(Commands::List { resource }) => match resource.as_str() {
             "analyzers" => {
+                #[warn(unused_must_use)]
                 analyze::list_analyzers().await;
             }
             "cache" => {
+                #[warn(unused_must_use)]
                 cache::list().await;
             }
             _ => {}
