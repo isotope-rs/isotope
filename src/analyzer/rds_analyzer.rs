@@ -12,12 +12,6 @@ pub struct RDSAnalyzer {
 #[async_trait]
 impl analyzer_trait::Analyzer for RDSAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
-        println!(
-            "{} {} {}",
-            "Running".green(),
-            "RDS".blue(),
-            "analyzer".green()
-        );
         let mut results = Vec::new();
 
         let rds = aws_sdk_rds::Client::new(&self.config);

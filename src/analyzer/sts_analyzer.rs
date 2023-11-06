@@ -13,13 +13,6 @@ pub struct STSAnalyzer {
 #[async_trait]
 impl analyzer_trait::Analyzer for STSAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
-        println!(
-            "{} {} {}",
-            "Running".green(),
-            "STS".blue(),
-            "analyzer".green()
-        );
-
         let mut results = vec![AnalysisResults {
             message: "".to_string(),
             analyzer_name: "".to_string(),

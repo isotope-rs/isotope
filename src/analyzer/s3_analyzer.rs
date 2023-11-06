@@ -61,12 +61,6 @@ pub struct S3Analyzer {
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
-        println!(
-            "{} {} {}",
-            "Running".green(),
-            "S3".blue(),
-            "analyzer".green()
-        );
         let mut results = vec![AnalysisResults {
             message: "".to_string(),
             analyzer_name: self.get_name(),

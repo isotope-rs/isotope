@@ -13,12 +13,6 @@ pub struct EbsAnalyzer {
 #[async_trait]
 impl analyzer_trait::Analyzer for EbsAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
-        println!(
-            "{} {} {}",
-            "Running".green(),
-            "EBS Volume".blue(),
-            "analyzer".green()
-        );
         let mut results = Vec::new();
         // TODO: Weird idiosyncrasy of the EC2 client
         let config = aws_types::sdk_config::SdkConfig::builder().build();

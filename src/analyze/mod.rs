@@ -7,10 +7,12 @@ use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use colored::Colorize;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::error::Error;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
+use std::thread;
+use std::time::Duration;
 
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
@@ -38,19 +40,13 @@ pub async fn run_analysis(
     let config = aws_config::from_env().region(region_provider).load().await;
     // Setup bedrock
     let bedrock_client = bedrock::BedrockClient::new(config.clone());
-
-    println!(
-        "Current AWS region: {}",
-        RegionProviderChain::default_provider()
-            .region()
-            .await
-            .unwrap()
-            .as_ref()
-            .yellow()
-    );
     // Create channels
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
     let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
+
+    // Progress bars
+    let m = MultiProgress::new();
+
 
     match selected_analyzer {
         Some(analyzer_arg) => {
@@ -60,11 +56,12 @@ pub async fn run_analysis(
             match filtered_analyzer {
                 Some(x) => {
                     let thread_tx = tx.clone();
-
                     let response = x.run().await;
+
                     match response {
                         Some(resp_results) => {
                             thread_tx.send(resp_results).unwrap();
+
                         }
                         None => {
                             thread_tx.send(vec![AnalysisResults::new()]).unwrap();
@@ -78,21 +75,38 @@ pub async fn run_analysis(
             let mut tasks = vec![];
             // Generate threads
             let mut count = 0;
+            let alen = analyzers.len();
             for current_analyzer in analyzers {
+                let pb = m.add(ProgressBar::new(count));
+                pb.enable_steady_tick(Duration::from_millis(200));
+                pb.set_style(
+                    ProgressStyle::with_template("{prefix:.dim.bold} {spinner} {wide_msg}")
+                        .unwrap()
+                        .tick_chars("/|\\- "),
+                );
+
+                pb.set_prefix(format!("[{}/{}]", count + 1, alen));
+                pb.set_message(format!("Starting {} analyzer", current_analyzer.get_name()));
+
                 let thread_tx = tx.clone();
                 tasks.push(tokio::spawn(async move {
+                    pb.inc(1);
                     let response = current_analyzer.run().await;
+                    pb.finish_with_message("done...");
                     match response {
                         Some(resp_results) => {
                             thread_tx.send(resp_results).unwrap();
+                            pb.finish();
                         }
                         None => {
                             thread_tx.send(vec![AnalysisResults::new()]).unwrap();
+
                         }
                     }
                 }));
                 count += 1;
             }
+
             let mut results: Vec<AnalysisResults> = vec![];
             // Aggregate results
             for _n in 0..count {
@@ -102,6 +116,7 @@ pub async fn run_analysis(
             for task in tasks {
                 task.await.unwrap();
             }
+            m.clear().unwrap();
 
             let mut processed_results: HashMap<String, Vec<AnalysisResults>> = HashMap::new();
             // generate Vectors aligned to each analyzer type
