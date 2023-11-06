@@ -6,6 +6,7 @@ use colored::Colorize;
 use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
+use crate::analyzer::analyzer_trait::Analyzer;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -130,4 +131,12 @@ impl analyzer_trait::Analyzer for S3Analyzer {
     fn get_name(&self) -> String {
         "s3".to_string()
     }
+}
+
+#[tokio::test]
+async fn get_name_test() {
+    let s3_analyzer = S3Analyzer {
+        config : aws_config::SdkConfig::builder().build(),
+    };
+    assert_eq!(s3_analyzer.get_name(), "s3".to_string());
 }

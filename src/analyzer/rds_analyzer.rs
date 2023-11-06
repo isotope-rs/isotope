@@ -4,6 +4,8 @@ use aws_sdk_rds;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
+use crate::analyzer::analyzer_trait::Analyzer;
+
 pub struct RDSAnalyzer {
 	pub config: aws_config::SdkConfig,
 }
@@ -43,4 +45,11 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
 	fn get_name(&self) -> String {
 		"rds".to_string()
 	}
+}
+#[tokio::test]
+async fn get_name_test() {
+	let rds_analyzer = RDSAnalyzer {
+		config : aws_config::SdkConfig::builder().build(),
+	};
+	assert_eq!(rds_analyzer.get_name(), "rds".to_string());
 }

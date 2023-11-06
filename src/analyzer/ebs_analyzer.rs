@@ -4,6 +4,8 @@ use aws_sdk_rds;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
+use crate::analyzer::analyzer_trait::Analyzer;
+
 pub struct EbsAnalyzer {
 	pub config: aws_config::SdkConfig,
 }
@@ -42,4 +44,12 @@ impl analyzer_trait::Analyzer for EbsAnalyzer {
 	fn get_name(&self) -> String {
 		"ebs".to_string()
 	}
+}
+
+#[tokio::test]
+async fn get_name_test() {
+	let ebs_analyzer = EbsAnalyzer {
+		config : aws_config::SdkConfig::builder().build(),
+	};
+	assert_eq!(ebs_analyzer.get_name(), "ebs".to_string());
 }

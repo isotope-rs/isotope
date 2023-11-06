@@ -5,6 +5,8 @@ use async_trait::async_trait;
 
 use colored::Colorize;
 use std::sync::Arc;
+use crate::analyzer::analyzer_trait::Analyzer;
+
 pub struct STSAnalyzer {
     pub config: aws_config::SdkConfig,
 }
@@ -48,4 +50,12 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
     fn get_name(&self) -> String {
         "sts".to_string()
     }
+}
+
+#[tokio::test]
+async fn get_name_test() {
+    let sts_analyzer = STSAnalyzer {
+        config : aws_config::SdkConfig::builder().build(),
+    };
+    assert_eq!(sts_analyzer.get_name(), "sts".to_string());
 }
