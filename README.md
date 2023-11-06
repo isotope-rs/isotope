@@ -71,7 +71,6 @@ isotope analyze -a S3
   - MFA detection
 - RDS
   - Public instance detection
-
-
-
+- EBS 
+  - Unattached disk 
 
