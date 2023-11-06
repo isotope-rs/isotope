@@ -39,6 +39,9 @@ aws-sdk-bedrock = "0.3.0"
 aws-sdk-bedrockruntime = "0.3.0"
 base64 = { version = "0.21.4", features = [] }
 aws-sdk-rds = "0.34.0"
+aws-sdk-ebs = "0.35.0"
+aws-sdk-ec2 = "0.35.0"
+aws-types = "0.57.1"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]

@@ -56,7 +56,7 @@ pub struct Bool {
 
 
 pub struct S3Analyzer {
-    pub config: Arc<aws_config::SdkConfig>,
+    pub config: aws_config::SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {

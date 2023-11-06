@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use colored::Colorize;
 use std::sync::Arc;
 pub struct STSAnalyzer {
-    pub config: Arc<aws_config::SdkConfig>,
+    pub config: aws_config::SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for STSAnalyzer {

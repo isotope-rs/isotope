@@ -5,7 +5,7 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
 pub struct RDSAnalyzer {
-	pub config: Arc<aws_config::SdkConfig>,
+	pub config: aws_config::SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for RDSAnalyzer {
