@@ -14,14 +14,18 @@ impl Conf {
         // append the new data to the hashmap
         self.stored_advice.insert(encoded_key, encoded_payload);
 
-        // Save the config
-        save_config(&self);
-        self
+        // In this scenario we cannot use ? operand as it impacts creation of the struct
+        match save_config(&self) {
+            Ok(x) => {
+                self
+            },
+            Err(e) => panic!()
+        }
     }
     pub fn remove_from_cache(mut self, raw_cache_key: &str) -> Result<Self, Box<dyn Error>> {
         let encoded_key = self.encode_cache_key(raw_cache_key);
         self.stored_advice.remove(encoded_key.as_str());
-        save_config(&self);
+        save_config(&self)?;
         Ok(self)
     }
     pub fn fetch_from_cache(&self, raw_cache_key: &str) -> Option<String> {

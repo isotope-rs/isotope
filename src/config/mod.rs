@@ -17,6 +17,14 @@ pub struct Conf {
     // With a subsequent value (also b64 encoded)
     pub stored_advice: HashMap<String, String>,
 }
+impl Conf {
+    pub fn new() -> Self {
+        Self {
+            cloud: "".to_string(),
+            stored_advice: Default::default(),
+        }
+    }
+}
 pub fn get_conf_path() -> String {
     let home = home_dir().unwrap();
     let mut confpath = home.to_str().unwrap().to_string();
@@ -65,10 +73,7 @@ fn config_test() {
 fn write_read_config_test() {
     let k = "gamma";
     let v = "epsilon";
-    let mut conf: Conf = Conf {
-        cloud: String::new(),
-        stored_advice: HashMap::new(),
-    };
+    let mut conf: Conf = Conf::new();
 
     if let Ok(c) = get_or_create_config() {
         conf = c

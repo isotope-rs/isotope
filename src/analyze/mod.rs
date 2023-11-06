@@ -29,10 +29,7 @@ pub async fn run_analysis(
     explain: &bool,
 ) -> Result<(), Box<dyn Error>> {
     // TODO: Refactor this horrible initialisation of the config
-    let mut conf: Conf = config::Conf {
-        cloud: String::new(),
-        stored_advice: HashMap::new(),
-    };
+    let mut conf: Conf = Conf::new();
     if let Ok(c) = config::get_or_create_config() {
         conf = c
     }
