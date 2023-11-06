@@ -3,9 +3,9 @@ use crate::analyzer::types::AnalysisResults;
 
 use async_trait::async_trait;
 
+use crate::analyzer::analyzer_trait::Analyzer;
 use colored::Colorize;
 use std::sync::Arc;
-use crate::analyzer::analyzer_trait::Analyzer;
 
 pub struct STSAnalyzer {
     pub config: aws_config::SdkConfig,
@@ -20,11 +20,11 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
             "analyzer".green()
         );
 
-	    let mut results = vec![AnalysisResults {
-		    message: "".to_string(),
+        let mut results = vec![AnalysisResults {
+            message: "".to_string(),
             analyzer_name: "".to_string(),
-            advice: "".to_string()
-	    }];
+            advice: "".to_string(),
+        }];
         let iam = aws_sdk_iam::Client::new(&self.config.clone());
         let list_users_response = iam.list_users().send().await;
         let users = list_users_response.unwrap().users.unwrap_or_default();
@@ -33,13 +33,16 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
 
             // Use IAM to get user's MFA status
             let mfa_devices_response = iam.list_mfa_devices().user_name(username).send().await;
-            let mfa_devices = mfa_devices_response.unwrap().mfa_devices.unwrap_or_default();
+            let mfa_devices = mfa_devices_response
+                .unwrap()
+                .mfa_devices
+                .unwrap_or_default();
 
             if mfa_devices.is_empty() {
-                results.push(AnalysisResults{
-	               message: format!("MFA is not enabled for user {}", username),
-                   analyzer_name: self.get_name(),
-                    advice: "".to_string()
+                results.push(AnalysisResults {
+                    message: format!("MFA is not enabled for user {}", username),
+                    analyzer_name: self.get_name(),
+                    advice: "".to_string(),
                 });
             }
         }
@@ -55,7 +58,7 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
 #[tokio::test]
 async fn get_name_test() {
     let sts_analyzer = STSAnalyzer {
-        config : aws_config::SdkConfig::builder().build(),
+        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(sts_analyzer.get_name(), "sts".to_string());
 }

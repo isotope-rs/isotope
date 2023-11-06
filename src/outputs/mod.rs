@@ -1,11 +1,11 @@
-use std::collections::HashMap;
-use colored::Colorize;
 use crate::analyzer::types::AnalysisResults;
+use colored::Colorize;
+use std::collections::HashMap;
 
 pub struct Processor {
-    analysis_results: HashMap<String,Vec<AnalysisResults>>,
+    analysis_results: HashMap<String, Vec<AnalysisResults>>,
     config: Option<Configuration>,
-    explain: bool
+    explain: bool,
 }
 
 pub struct Configuration {
@@ -13,11 +13,15 @@ pub struct Configuration {
 }
 
 impl Processor {
-    pub fn new(analysis_results: HashMap<String,Vec<AnalysisResults>>, config: Option<Configuration>, explain: bool) -> Self {
+    pub fn new(
+        analysis_results: HashMap<String, Vec<AnalysisResults>>,
+        config: Option<Configuration>,
+        explain: bool,
+    ) -> Self {
         Self {
             analysis_results,
             config,
-            explain
+            explain,
         }
     }
 
@@ -35,7 +39,7 @@ impl Processor {
     fn print_text(&self) {
         for (_key, value) in &self.analysis_results {
             for results in value.iter() {
-                println!("{}",results.message.blue());
+                println!("{}", results.message.blue());
                 if self.explain {
                     println!("{}", results.advice.green())
                 }
@@ -44,7 +48,10 @@ impl Processor {
     }
 
     fn print_json(&mut self) {
-        println!("{}", serde_json::to_string_pretty(&self.analysis_results).unwrap());
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&self.analysis_results).unwrap()
+        );
     }
 }
 

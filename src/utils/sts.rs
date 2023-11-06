@@ -1,7 +1,3 @@
-
-
-
-
 use std::sync::Arc;
 
 pub async fn get_account_id(config: Arc<aws_config::SdkConfig>) -> Option<String> {
@@ -16,7 +12,7 @@ pub async fn assume_role(
     account_id: &str,
     role_name: &str,
     session_name: &str,
-)  {
+) {
     let sts = aws_sdk_sts::Client::new(&config);
     let input_role = format!("arn:aws:iam::{}:role/{}", account_id, role_name);
     println!("Assuming {}", input_role);
@@ -29,5 +25,5 @@ pub async fn assume_role(
         .await;
 
     println!("{:?}", sts_response);
-   // Ok(sts_response)
+    // Ok(sts_response)
 }

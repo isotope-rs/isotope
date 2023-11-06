@@ -1,8 +1,8 @@
 mod cache;
 
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use simple_home_dir::*;
+use std::collections::HashMap;
 use std::error::Error;
 use std::fs::File;
 use std::io::{Read, Write};
@@ -15,7 +15,7 @@ pub struct Conf {
     pub cloud: String,
     // This is stored as a hashed string representing the issue e.g. S3 bucket public
     // With a subsequent value (also b64 encoded)
-    pub stored_advice: HashMap<String,String>
+    pub stored_advice: HashMap<String, String>,
 }
 pub fn get_conf_path() -> String {
     let home = home_dir().unwrap();
@@ -24,7 +24,7 @@ pub fn get_conf_path() -> String {
     confpath.push_str(CONFFILE);
     confpath
 }
-pub fn save_config(config: Conf) -> Result<(), Box<dyn Error>> {
+pub fn save_config(config: &Conf) -> Result<(), Box<dyn Error>> {
     let p = get_conf_path();
     let s = serde_json::to_string(&config)?;
     let mut f = std::fs::OpenOptions::new()
@@ -55,8 +55,33 @@ pub fn get_or_create_config() -> Result<Conf, Box<dyn Error>> {
     Ok(c)
 }
 #[test]
-fn test_config() {
+fn config_test() {
     let p = get_conf_path();
     assert_ne!(p.len(), 0);
     assert_eq!(p.contains(CONFFILE), true);
+}
+
+#[test]
+fn write_read_config_test() {
+    let k = "gamma";
+    let v = "epsilon";
+    let mut conf: Conf = Conf {
+        cloud: String::new(),
+        stored_advice: HashMap::new(),
+    };
+
+    if let Ok(c) = get_or_create_config() {
+        conf = c
+    }
+    conf = conf.upsert_into_cache(k, v);
+    match conf.fetch_from_cache(k) {
+        Some(x) => {
+            conf.remove_from_cache(k);
+            assert_eq!(x, v);
+        }
+        None => {
+            conf.remove_from_cache(k);
+            assert_ne!(0, 0);
+        }
+    }
 }

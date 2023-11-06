@@ -2,11 +2,11 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 
-use colored::Colorize;
-use std::sync::Arc;
-use serde::{Deserialize, Serialize};
-use serde_json::{Value};
 use crate::analyzer::analyzer_trait::Analyzer;
+use colored::Colorize;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::sync::Arc;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -55,13 +55,11 @@ pub struct Bool {
     pub aws_secure_transport: String,
 }
 
-
 pub struct S3Analyzer {
     pub config: aws_config::SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {
-
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
         println!(
             "{} {} {}",
@@ -72,7 +70,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
         let mut results = vec![AnalysisResults {
             message: "".to_string(),
             analyzer_name: self.get_name(),
-            advice: "".to_string()
+            advice: "".to_string(),
         }];
 
         let s3 = aws_sdk_s3::Client::new(&self.config);
@@ -89,10 +87,10 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                         if grantee.clone().grantee.unwrap().uri
                             == Some("http://acs.amazonaws.com/groups/global/AllUsers".to_string())
                         {
-                            results.push(AnalysisResults{
+                            results.push(AnalysisResults {
                                 message: format!("Publicly accessible S3 bucket {}", &bucket_name),
                                 analyzer_name: self.get_name(),
-                                advice: "".to_string()
+                                advice: "".to_string(),
                             });
                         }
                     }
@@ -104,23 +102,25 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                         let policy_json = response.policy.unwrap();
                         // You can parse and analyze the policy JSON if needed.
                         // Deserialize the JSON into a BucketPolicy struct.
-                        match  serde_json::from_str::<Policy>(&policy_json) {
+                        match serde_json::from_str::<Policy>(&policy_json) {
                             Ok(data) => {
-
                                 for s in data.statement {
-                                   if s.principal == "*" {
-                                       results.push(AnalysisResults{
-                                           message: format!("Publicly accessible S3 bucket {}", &bucket_name),
-                                           analyzer_name: self.get_name(),
-                                           advice: "".to_string()
-                                       });
-                                   }
+                                    if s.principal == "*" {
+                                        results.push(AnalysisResults {
+                                            message: format!(
+                                                "Publicly accessible S3 bucket {}",
+                                                &bucket_name
+                                            ),
+                                            analyzer_name: self.get_name(),
+                                            advice: "".to_string(),
+                                        });
+                                    }
                                 }
-                            },
-                            Err(_e) => ()
+                            }
+                            Err(_e) => (),
                         }
                     }
-                    Err(_err) => ()
+                    Err(_err) => (),
                 }
             }
         }
@@ -136,7 +136,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
 #[tokio::test]
 async fn get_name_test() {
     let s3_analyzer = S3Analyzer {
-        config : aws_config::SdkConfig::builder().build(),
+        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(s3_analyzer.get_name(), "s3".to_string());
 }
