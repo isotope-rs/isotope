@@ -8,6 +8,8 @@
 
 Isotope scans AWS services and makes suggestions on how to improve them using AWS Bedrock (Artificial Intelligence).
 
+<img src="images/example.gif" width=650px; />
+
 ## Key benefits
 - No exfiltration of data beyond your AWS account 
 - Discrete examination of your services within AWS
