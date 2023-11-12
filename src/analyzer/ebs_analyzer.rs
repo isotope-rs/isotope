@@ -4,7 +4,7 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_ec2;
 
-use colored::Colorize;
+
 
 pub struct EbsAnalyzer {
     pub config: aws_config::SdkConfig,

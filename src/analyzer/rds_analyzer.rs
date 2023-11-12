@@ -3,7 +3,7 @@ use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_rds;
-use colored::Colorize;
+
 
 
 pub struct RDSAnalyzer {

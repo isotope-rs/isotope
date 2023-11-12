@@ -11,7 +11,6 @@ use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::error::Error;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
-use std::thread;
 use std::time::Duration;
 
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {

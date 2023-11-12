@@ -4,7 +4,7 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 
 use crate::analyzer::analyzer_trait::Analyzer;
-use colored::Colorize;
+
 
 
 pub struct STSAnalyzer {
