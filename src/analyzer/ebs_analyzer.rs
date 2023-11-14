@@ -5,6 +5,7 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_ec2;
 use aws_types::region::Region;
+use crate::utils;
 
 
 pub struct EbsAnalyzer {
@@ -14,9 +15,7 @@ pub struct EbsAnalyzer {
 impl analyzer_trait::Analyzer for EbsAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
         let mut results = Vec::new();
-        let aws_region = env::var("AWS_REGION").unwrap();
-        let region = Region::new(aws_region);
-        let config = aws_config::from_env().region(region).load().await;
+        let config = utils::load_config().await;
         let ec2 = aws_sdk_ec2::Client::new(&config);
 
         if let Ok(volumes) = ec2.describe_volumes().send().await {

@@ -6,6 +6,7 @@ use aws_types::region::Region;
 use crate::analyzer::analyzer_trait::Analyzer;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use crate::utils;
 
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -66,9 +67,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
             analyzer_name: self.get_name(),
             advice: "".to_string(),
         }];
-        let aws_region = env::var("AWS_REGION").unwrap();
-        let region = Region::new(aws_region);
-        let config = aws_config::from_env().region(region).load().await;
+        let config = utils::load_config().await;
         let s3 = aws_sdk_s3::Client::new(&config);
         let s3_response = s3.list_buckets().send().await;
 
