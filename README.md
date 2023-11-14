@@ -60,6 +60,12 @@ aws iam enable-mfa-device --user-name alex --serial-number arn:aws:iam::12345678
 brew install isotope-rs/homebrew-isotope/isotope
 ```
 
+Or with Cargo
+
+```bash
+cargo install isotope
+```
+
 ## Usage
 
 1. Set environment variables for AWS access
