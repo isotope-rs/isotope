@@ -19,9 +19,11 @@ _From the minds behind k8sgpt_
 <br/>
 
 Isotope scans AWS services and makes suggestions on how to improve them using AWS Bedrock (Artificial Intelligence).
+
 We leverage the high fidelity corpus of data inputted and trained by AWS to give you the best recommendations possible on how to secure your VPC.
 Our mission is to provide high quality analysis without needing to subscribe to specialist services. 
 All the information and clear actions you could need, right on your CLI.
+
 
 <img src="images/example.gif" width=650px; />
 
