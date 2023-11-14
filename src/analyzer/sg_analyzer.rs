@@ -3,15 +3,14 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
 use aws_sdk_ec2;
+use crate::utils;
+
 pub struct SecurityGroupsAnalyzer {
 }
 
 #[async_trait]
 impl analyzer_trait::Analyzer for SecurityGroupsAnalyzer {
 	async fn run(&self) -> Option<Vec<AnalysisResults>> {
-
-
-		return None;
 
 		println!(
 			"{} {} {}",
@@ -20,7 +19,7 @@ impl analyzer_trait::Analyzer for SecurityGroupsAnalyzer {
 			"analyzer".green()
 		);
 		let mut results = Vec::new();
-		let config = aws_types::sdk_config::SdkConfig::builder().build();
+		let config = utils::load_config().await;
 		let client = aws_sdk_ec2::Client::new(&config);
 		let response =  client.describe_security_groups().send().await;
 		match response {

@@ -6,6 +6,7 @@ use crate::analyzer::analyzer_trait::Analyzer;
 use aws_sdk_iam as iam;
 use aws_types;
 use aws_types::region::Region;
+use crate::utils;
 
 pub struct STSAnalyzer {
 }
@@ -17,9 +18,7 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
             analyzer_name: "".to_string(),
             advice: "".to_string(),
         }];
-        let aws_region = env::var("AWS_REGION").unwrap();
-        let region = Region::new(aws_region);
-        let config = aws_config::from_env().region(region).load().await;
+        let config = utils::load_config().await;
         let iam = aws_sdk_iam::Client::new(&config);
         let list_users_response = iam.list_users().send().await;
         let users = list_users_response.unwrap().users;
