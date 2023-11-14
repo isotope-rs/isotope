@@ -6,7 +6,22 @@
 
 # Isotope
 
+<picture>
+  <source srcset="https://raw.githubusercontent.com/k8sgpt-ai/community/main/artwork/icon-logo-01.svg" width="100px;">
+</picture>
+
+_From the minds behind k8sgpt_
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/k8sgpt-ai/community/main/artwork/full-logo-02.svg" width="100px;">
+  <img alt="Text changing depending on mode. Light: 'So light!' Dark: 'So dark!'" src="https://raw.githubusercontent.com/k8sgpt-ai/community/main/artwork/full-logo-01.svg" width="100px;">
+</picture>
+<br/>
+
 Isotope scans AWS services and makes suggestions on how to improve them using AWS Bedrock (Artificial Intelligence).
+We leverage the high fidelity corpus of data inputted and trained by AWS to give you the best recommendations possible on how to secure your VPC.
+Our mission is to provide high quality analysis without needing to subscribe to specialist services. 
+All the information and clear actions you could need, right on your CLI.
 
 <img src="images/example.gif" width=650px; />
 
@@ -78,3 +93,7 @@ isotope analyze -a S3
   - Unattached disk 
 - SG
   - Permissive security group detection
+ 
+### Community
+
+Find us on K8sGPT [Slack](https://join.slack.com/t/k8sgpt/shared_invite/zt-1rwe5fpzq-VNtJK8DmYbbm~iWL1H34nw) Isotope channel
