@@ -1,20 +1,23 @@
+use std::env;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_rds;
-
+use aws_types::region::Region;
 
 
 pub struct RDSAnalyzer {
-    pub config: aws_config::SdkConfig,
+
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for RDSAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
         let mut results = Vec::new();
-
-        let rds = aws_sdk_rds::Client::new(&self.config);
+        let aws_region = env::var("AWS_REGION").unwrap();
+        let region = Region::new(aws_region);
+        let config = aws_config::from_env().region(region).load().await;
+        let rds = aws_sdk_rds::Client::new(&config);
         let response = rds.describe_db_instances().send().await;
         for dbinstances in response {
             for vdbs in dbinstances.db_instances.iter() {

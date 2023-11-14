@@ -1,14 +1,13 @@
+use std::env;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
-
 use async_trait::async_trait;
-
 use crate::analyzer::analyzer_trait::Analyzer;
-
-
+use aws_sdk_iam as iam;
+use aws_types;
+use aws_types::region::Region;
 
 pub struct STSAnalyzer {
-    pub config: aws_config::SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for STSAnalyzer {
@@ -18,22 +17,24 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
             analyzer_name: "".to_string(),
             advice: "".to_string(),
         }];
-        let iam = aws_sdk_iam::Client::new(&self.config.clone());
+        let aws_region = env::var("AWS_REGION").unwrap();
+        let region = Region::new(aws_region);
+        let config = aws_config::from_env().region(region).load().await;
+        let iam = aws_sdk_iam::Client::new(&config);
         let list_users_response = iam.list_users().send().await;
-        let users = list_users_response.unwrap().users.unwrap_or_default();
+        let users = list_users_response.unwrap().users;
         for user in users {
-            let username = user.user_name.as_deref().unwrap_or_default();
+            let username = user.user_name;
 
             // Use IAM to get user's MFA status
-            let mfa_devices_response = iam.list_mfa_devices().user_name(username).send().await;
+            let mfa_devices_response = iam.list_mfa_devices().user_name(&username).send().await;
             let mfa_devices = mfa_devices_response
                 .unwrap()
-                .mfa_devices
-                .unwrap_or_default();
+                .mfa_devices;
 
             if mfa_devices.is_empty() {
                 results.push(AnalysisResults {
-                    message: format!("MFA is not enabled for user {}", username),
+                    message: format!("MFA is not enabled for user {}", &username),
                     analyzer_name: self.get_name(),
                     advice: "".to_string(),
                 });
@@ -51,7 +52,6 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
 #[tokio::test]
 async fn get_name_test() {
     let sts_analyzer = STSAnalyzer {
-        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(sts_analyzer.get_name(), "sts".to_string());
 }
