@@ -19,7 +19,7 @@ Isotope scans AWS services and makes suggestions on how to improve them using AW
 ### Example
 
 ```
-❯ isotope analze --explain
+❯ isotope analyze --explain
 Current AWS region: eu-west-2
 Running STS analyzer
 Running S3 analyzer
