@@ -1,6 +1,6 @@
 [package]
 name = "isotope"
-version = "0.0.6"
+version = "0.0.7"
 repository = "https://github.com/isotope-rs/isotope.git"
 edition = "2021"
 description = "Isotope scans AWS services and makes suggestions on how to improve them using Artificial Intelligence."
