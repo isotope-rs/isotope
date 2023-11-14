@@ -4,6 +4,10 @@
 </picture>
 <br/>
 
+![Static Badge](https://img.shields.io/badge/status-alpha-blue)
+![Crates.io](https://img.shields.io/crates/d/isotope)
+![Crates.io](https://img.shields.io/crates/l/isotope/0.0.7)
+
 # Isotope
 
 <picture>
