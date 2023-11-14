@@ -76,4 +76,5 @@ isotope analyze -a S3
   - Public instance detection
 - EBS 
   - Unattached disk 
-
+- SG
+  - Permissive security group detection

@@ -10,7 +10,7 @@ pub(crate) mod types;
 mod sg_analyzer;
 
 pub fn generate_analyzers() -> Vec<Box<dyn Analyzer>> {
-    vec![
+    let analyzers: Vec<Box<dyn Analyzer>> = vec![
         Box::new(s3_analyzer::S3Analyzer {
         }),
         Box::new(sts_analyzer::STSAnalyzer {
@@ -19,7 +19,8 @@ pub fn generate_analyzers() -> Vec<Box<dyn Analyzer>> {
         }),
         Box::new(ebs_analyzer::EbsAnalyzer {
         }),
-        // Box::new(sg_analyzer::SecurityGroupsAnalyzer {
-        // })
-    ]
+        Box::new(sg_analyzer::SecurityGroupsAnalyzer {
+        })
+    ];
+    analyzers
 }

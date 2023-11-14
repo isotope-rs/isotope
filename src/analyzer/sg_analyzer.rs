@@ -52,10 +52,22 @@ fn has_wide_open_rules(permissions: &Option<Vec<aws_sdk_ec2::types::IpPermission
 		for rule in rules {
 			if rule.from_port.is_none()
 				&& rule.clone().to_port.is_none()
-				&& rule.clone().ip_ranges.unwrap().is_empty()
-				&& rule.clone().ipv6_ranges.unwrap().is_empty()
-				&& rule.clone().user_id_group_pairs.unwrap().is_empty()
 			{
+				// Check if the ip_range CIDR blocks are wide open
+				if let Some(ip_ranges) = &rule.ip_ranges {
+					for ip_range in ip_ranges {
+						if ip_range.cidr_ip == Some("0.0.0.0/0".to_string()) {
+							return true;
+						}
+					}
+				}
+				if let Some(ipv6_ranges) = &rule.ipv6_ranges {
+					for ipv6_range in ipv6_ranges {
+						if ipv6_range.cidr_ipv6 == Some("::/0".to_string()) {
+							return true;
+						}
+					}
+				}
 				return true; // Wide-open rule found
 			}
 		}
