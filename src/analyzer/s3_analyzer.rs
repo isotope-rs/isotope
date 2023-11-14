@@ -1,9 +1,9 @@
+use std::env;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
-
+use aws_types::region::Region;
 use crate::analyzer::analyzer_trait::Analyzer;
-
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -56,7 +56,7 @@ pub struct Bool {
 }
 
 pub struct S3Analyzer {
-    pub config: aws_config::SdkConfig,
+
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {
@@ -66,26 +66,28 @@ impl analyzer_trait::Analyzer for S3Analyzer {
             analyzer_name: self.get_name(),
             advice: "".to_string(),
         }];
-
-        let s3 = aws_sdk_s3::Client::new(&self.config);
-
+        let aws_region = env::var("AWS_REGION").unwrap();
+        let region = Region::new(aws_region);
+        let config = aws_config::from_env().region(region).load().await;
+        let s3 = aws_sdk_s3::Client::new(&config);
         let s3_response = s3.list_buckets().send().await;
 
         for bucket in s3_response.unwrap().buckets {
             for b in bucket {
                 let bucket_name = b.name.unwrap();
                 // Check if the S3 bucket ACL is publicly accessible.
-                let acl_response = s3.get_bucket_acl().bucket(&bucket_name).send().await;
-                for grant in acl_response.unwrap().grants {
-                    if let Some(grantee) = grant.first() {
-                        if grantee.clone().grantee.unwrap().uri
-                            == Some("http://acs.amazonaws.com/groups/global/AllUsers".to_string())
-                        {
-                            results.push(AnalysisResults {
-                                message: format!("Publicly accessible S3 bucket {}", &bucket_name),
-                                analyzer_name: self.get_name(),
-                                advice: "".to_string(),
-                            });
+                if let Ok(acl_response)  = s3.get_bucket_acl().bucket(&bucket_name).send().await {
+                    for grant in acl_response.grants {
+                        if let Some(grantee) = grant.first() {
+                            if grantee.clone().grantee.unwrap().uri
+                                == Some("http://acs.amazonaws.com/groups/global/AllUsers".to_string())
+                            {
+                                results.push(AnalysisResults {
+                                    message: format!("Publicly accessible S3 bucket {}", &bucket_name),
+                                    analyzer_name: self.get_name(),
+                                    advice: "".to_string(),
+                                });
+                            }
                         }
                     }
                 }
@@ -114,7 +116,8 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                             Err(_e) => (),
                         }
                     }
-                    Err(_err) => (),
+                    Err(err) => (
+                        ),
                 }
             }
         }
@@ -130,7 +133,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
 #[tokio::test]
 async fn get_name_test() {
     let s3_analyzer = S3Analyzer {
-        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(s3_analyzer.get_name(), "s3".to_string());
 }

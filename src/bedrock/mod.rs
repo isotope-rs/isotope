@@ -1,11 +1,12 @@
-use aws_config::meta::region::ProvideRegion;
-use aws_config::SdkConfig;
+
+use aws_sdk_bedrockruntime::{ Client};
 use aws_sdk_bedrockruntime::primitives::Blob;
+
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::error::Error;
-
-use aws_sdk_config::config::Region;
+use aws_config::meta::region::RegionProviderChain;
+use aws_types::region::Region;
 
 mod prompt;
 
@@ -34,21 +35,18 @@ impl From<ClaudParams> for Blob {
     }
 }
 pub struct BedrockClient {
-    config: aws_config::SdkConfig,
 }
 
 impl BedrockClient {
-    pub fn new(config: SdkConfig) -> Self {
-        Self { config }
+    pub fn new() -> Self {
+        Self{}
     }
     pub async fn enrich(&self, prompt: String) -> Result<String, Box<dyn Error>> {
         // force the config rejoin be set
         let bedrock_region = env::var("BEDROCK_REGION")?.clone();
-        let conf = aws_config::from_env()
-            .region(Region::new(bedrock_region))
-            .load()
-            .await;
-        let client = aws_sdk_bedrockruntime::Client::new(&conf);
+        let region = Region::new(bedrock_region);
+        let config = aws_config::from_env().region(region).load().await;
+        let client = aws_sdk_bedrockruntime::Client::new(&config);
         let bedrock_model = env::var("BEDROCK_MODEL")?;
 
         let question = format!("{} {}", prompt::DEFAULT_PROMPT, prompt.as_str());
@@ -66,7 +64,7 @@ impl BedrockClient {
             completion: "".to_string(),
         };
 
-        let data = response.unwrap();
+        let data = response;
         let data = serde_json::from_slice::<ClaudeOutput>(data.as_ref()).expect("invalid schema");
         response_capture.completion = data.completion.clone();
         Ok(response_capture.completion)

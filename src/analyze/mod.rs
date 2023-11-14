@@ -17,7 +17,7 @@ pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
-    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers();
     println!("Analyzers");
     for analyzer in analyzers {
         println!("> {}", analyzer.get_name());
@@ -38,10 +38,10 @@ pub async fn run_analysis(
     let region_provider = RegionProviderChain::default_provider();
     let config = aws_config::from_env().region(region_provider).load().await;
     // Setup bedrock
-    let bedrock_client = bedrock::BedrockClient::new(config.clone());
+    let bedrock_client = bedrock::BedrockClient::new();
     // Create channels
     let (tx, rx): (Sender<Vec<AnalysisResults>>, Receiver<Vec<AnalysisResults>>) = mpsc::channel();
-    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(config.clone());
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers();
 
     // Progress bars
     let m = MultiProgress::new();

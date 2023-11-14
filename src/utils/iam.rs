@@ -31,9 +31,9 @@ pub async fn create_policy(
         .policy_name(policy_name)
         .policy_document(policy_document)
         .send()
-        .await?;
+        .await;
 
-    Ok(r.policy.unwrap())
+    Ok(r.unwrap().policy.unwrap())
 }
 pub async fn create_role(
     config: Arc<aws_config::SdkConfig>,
