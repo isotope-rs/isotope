@@ -47,7 +47,6 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
 #[tokio::test]
 async fn get_name_test() {
     let rds_analyzer = RDSAnalyzer {
-        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(rds_analyzer.get_name(), "rds".to_string());
 }

@@ -133,7 +133,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
 #[tokio::test]
 async fn get_name_test() {
     let s3_analyzer = S3Analyzer {
-        config: aws_config::SdkConfig::builder().build(),
     };
     assert_eq!(s3_analyzer.get_name(), "s3".to_string());
 }
