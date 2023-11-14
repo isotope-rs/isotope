@@ -8,8 +8,6 @@
 ![Crates.io](https://img.shields.io/crates/d/isotope)
 ![Crates.io](https://img.shields.io/crates/l/isotope/0.0.7)
 
-# Isotope
-
 <picture>
   <source srcset="https://raw.githubusercontent.com/k8sgpt-ai/community/main/artwork/icon-logo-01.svg" width="100px;">
 </picture>
