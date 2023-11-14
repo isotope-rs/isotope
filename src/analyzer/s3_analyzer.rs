@@ -117,7 +117,6 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                         }
                     }
                     Err(err) => (
-                        println!("{}",err)
                         ),
                 }
             }
