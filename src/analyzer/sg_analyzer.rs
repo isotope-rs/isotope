@@ -4,7 +4,7 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
 use aws_sdk_ec2;
-use crate::utils;
+
 
 pub struct SecurityGroupsAnalyzer {
 	pub config: SdkConfig

@@ -1,13 +1,13 @@
-use std::env;
+
 use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
-use aws_types::region::Region;
+use crate::utils;
 use crate::analyzer::analyzer_trait::Analyzer;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use crate::utils;
+
 
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -115,7 +115,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                             Err(_e) => (),
                         }
                     }
-                    Err(err) => (
+                    Err(_err) => (
                         ),
                 }
             }

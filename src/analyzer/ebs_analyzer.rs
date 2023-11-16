@@ -1,4 +1,4 @@
-use std::env;
+
 use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::analyzer_trait::Analyzer;

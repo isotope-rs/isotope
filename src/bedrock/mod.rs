@@ -1,11 +1,11 @@
 
-use aws_sdk_bedrockruntime::{ Client};
+
 use aws_sdk_bedrockruntime::primitives::Blob;
 
 use serde::{Deserialize, Serialize};
 use std::env;
 use std::error::Error;
-use aws_config::meta::region::RegionProviderChain;
+
 use aws_types::region::Region;
 
 mod prompt;

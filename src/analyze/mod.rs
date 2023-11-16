@@ -3,7 +3,7 @@ use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
 use crate::{analyzer, bedrock, utils};
 use crate::{config, outputs};
-use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
+use aws_config::meta::region::{RegionProviderChain};
 use colored::Colorize;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -15,7 +15,7 @@ use std::time::Duration;
 
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
-    let region_provider = RegionProviderChain::default_provider();
+    let _region_provider = RegionProviderChain::default_provider();
     let config = utils::load_config().await;
     let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(&config);
     println!("Analyzers");
@@ -57,21 +57,28 @@ pub async fn run_analysis(
                 Some(x) => {
                     let thread_tx = tx.clone();
                     let pb = m.add(ProgressBar::new(count));
+                    pb.enable_steady_tick(Duration::from_millis(200));
+                    pb.set_style(
+                        ProgressStyle::with_template("{prefix:.dim.bold} {spinner} {wide_msg}")
+                            .unwrap()
+                            .tick_chars("/|\\- "),
+                    );
+                    pb.set_prefix(format!("[{}/{}]", count + 1, 1));
+                    pb.set_message(format!("Starting {} analyzer", x.get_name()));
                     tasks.push(tokio::spawn(async move {
-                        pb.inc(1);
                         let response = x.run().await;
-                        pb.finish_with_message("done...");
                         match response {
                             Some(resp_results) => {
                                 tx.send(resp_results).unwrap();
-                                pb.finish();
+                                pb.finish_with_message("done...");
                             }
                             None => {
                                 thread_tx.send(vec![AnalysisResults::new()]).unwrap();
-                                pb.finish();
+                                pb.finish_with_message("done...");
                             }
                         }
                     }));
+                    count = count + 1;
                 }
                 None => println!("analyzer of type not found"),
             }
@@ -91,25 +98,22 @@ pub async fn run_analysis(
 
                 pb.set_prefix(format!("[{}/{}]", count + 1, alen));
                 pb.set_message(format!("Starting {} analyzer", current_analyzer.get_name()));
-
+                count = count + 1;
                 let thread_tx = tx.clone();
                 tasks.push(tokio::spawn(async move {
-                    pb.inc(1);
                     let response = current_analyzer.run().await;
-                    pb.finish_with_message("done...");
+
                     match response {
                         Some(resp_results) => {
                             thread_tx.send(resp_results).unwrap();
-                            pb.finish();
+                            pb.finish_with_message("done...");
                         }
                         None => {
                             thread_tx.send(vec![AnalysisResults::new()]).unwrap();
-                            pb.finish();
+                            pb.finish_with_message("done...");
                         }
                     }
                 }));
-                count = count + 1;
-
             }
 
         }

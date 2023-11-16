@@ -8,6 +8,7 @@ mod s3_analyzer;
 mod sts_analyzer;
 pub(crate) mod types;
 mod sg_analyzer;
+mod eip_analzyer;
 
 pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
     let analyzers: Vec<Box<dyn Analyzer>> = vec![
@@ -24,6 +25,9 @@ pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
             config: config.clone()
         }),
         Box::new(sg_analyzer::SecurityGroupsAnalyzer {
+            config: config.clone()
+        }),
+        Box::new(eip_analzyer::EipAnalyzer {
             config: config.clone()
         })
     ];

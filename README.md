@@ -103,6 +103,8 @@ isotope analyze -a S3
   - Unattached disk 
 - SG
   - Permissive security group detection
+- EC2
+  - Orphaned Elastic IP address
  
 ### Community
 

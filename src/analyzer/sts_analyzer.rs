@@ -1,12 +1,12 @@
-use std::env;
+
 use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use crate::analyzer::analyzer_trait::Analyzer;
-use aws_sdk_iam as iam;
+
 use aws_types;
-use aws_types::region::Region;
+
 use crate::utils;
 
 pub struct STSAnalyzer {
@@ -20,7 +20,7 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
             analyzer_name: "".to_string(),
             advice: "".to_string(),
         }];
-        let config = utils::load_config().await;
+        let _config = utils::load_config().await;
         let iam = aws_sdk_iam::Client::new(&self.config);
         let list_users_response = iam.list_users().send().await;
         let users = list_users_response.unwrap().users;
