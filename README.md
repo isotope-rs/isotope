@@ -106,4 +106,4 @@ isotope analyze -a S3
  
 ### Community
 
-Find us on K8sGPT [Slack](https://join.slack.com/t/k8sgpt/shared_invite/zt-1rwe5fpzq-VNtJK8DmYbbm~iWL1H34nw) Isotope channel
+Find us on K8sGPT [Slack](https://join.slack.com/t/k8sgpt/shared_invite/zt-276pa9uyq-pxAUr4TCVHubFxEvLZuT1Q) Isotope channel
