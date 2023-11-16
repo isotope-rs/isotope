@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::types::AnalysisResults;
 use colored::Colorize;
@@ -6,6 +7,7 @@ use aws_sdk_ec2;
 use crate::utils;
 
 pub struct SecurityGroupsAnalyzer {
+	pub config: SdkConfig
 }
 
 #[async_trait]
@@ -19,8 +21,7 @@ impl analyzer_trait::Analyzer for SecurityGroupsAnalyzer {
 			"analyzer".green()
 		);
 		let mut results = Vec::new();
-		let config = utils::load_config().await;
-		let client = aws_sdk_ec2::Client::new(&config);
+		let client = aws_sdk_ec2::Client::new(&self.config);
 		let response =  client.describe_security_groups().send().await;
 		match response {
 			Ok(x) => {
