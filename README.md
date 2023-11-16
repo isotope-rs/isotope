@@ -105,6 +105,7 @@ isotope analyze -a S3
   - Permissive security group detection
 - EC2
   - Orphaned Elastic IP address
+  - Public snapshot detection
  
 ### Community
 
