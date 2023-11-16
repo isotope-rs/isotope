@@ -1,22 +1,22 @@
 use std::env;
+use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_sdk_ec2;
-use aws_types::region::Region;
 use crate::utils;
 
 
 pub struct EbsAnalyzer {
+    pub config: SdkConfig
 }
 
 #[async_trait]
 impl analyzer_trait::Analyzer for EbsAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
         let mut results = Vec::new();
-        let config = utils::load_config().await;
-        let ec2 = aws_sdk_ec2::Client::new(&config);
+        let ec2 = aws_sdk_ec2::Client::new(&self.config);
 
         if let Ok(volumes) = ec2.describe_volumes().send().await {
             for volume in volumes.volumes.unwrap_or_default() {
@@ -44,8 +44,9 @@ impl analyzer_trait::Analyzer for EbsAnalyzer {
 
 #[tokio::test]
 async fn get_name_test() {
+    let config = utils::load_config().await;
     let ebs_analyzer = EbsAnalyzer {
-
+        config: config
     };
     assert_eq!(ebs_analyzer.get_name(), "ebs".to_string());
 }

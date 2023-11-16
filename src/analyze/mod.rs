@@ -1,7 +1,7 @@
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
-use crate::{analyzer, bedrock};
+use crate::{analyzer, bedrock, utils};
 use crate::{config, outputs};
 use aws_config::meta::region::{ProvideRegion, RegionProviderChain};
 use colored::Colorize;
@@ -16,8 +16,8 @@ use std::time::Duration;
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
     let region_provider = RegionProviderChain::default_provider();
-    let config = aws_config::from_env().region(region_provider).load().await;
-    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers();
+    let config = utils::load_config().await;
+    let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(&config);
     println!("Analyzers");
     for analyzer in analyzers {
         println!("> {}", analyzer.get_name());
@@ -34,9 +34,10 @@ pub async fn run_analysis(
     if let Ok(c) = config::get_or_create_config() {
         conf = c
     }
-    // Setup available providers
-    let region_provider = RegionProviderChain::default_provider();
-    let config = aws_config::from_env().region(region_provider).load().await;
+
+    // The first action should be to establish if configuration is valid
+    let config = utils::load_config().await;
+
     // Setup bedrock
     let bedrock_client = bedrock::BedrockClient::new();
     // Create channels
@@ -48,7 +49,7 @@ pub async fn run_analysis(
 
     match selected_analyzer {
         Some(analyzer_arg) => {
-            let filtered_analyzer = analyzer::generate_analyzers()
+            let filtered_analyzer = analyzer::generate_analyzers(&config)
                 .into_iter()
                 .find(|x| x.get_name() == *analyzer_arg);
 
@@ -76,7 +77,7 @@ pub async fn run_analysis(
             }
         }
         None => {
-            let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers();
+            let analyzers: Vec<Box<dyn Analyzer>> = analyzer::generate_analyzers(&config);
             // Generate threads
             let alen = analyzers.len();
             for current_analyzer in analyzers {
