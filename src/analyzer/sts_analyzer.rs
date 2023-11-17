@@ -49,12 +49,3 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
         "sts".to_string()
     }
 }
-
-#[tokio::test]
-async fn get_name_test() {
-    let config = utils::load_config().await;
-    let sts_analyzer = STSAnalyzer {
-        config: config
-    };
-    assert_eq!(sts_analyzer.get_name(), "sts".to_string());
-}

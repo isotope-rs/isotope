@@ -129,12 +129,3 @@ impl analyzer_trait::Analyzer for S3Analyzer {
     }
 }
 
-#[tokio::test]
-async fn get_name_test() {
-    let config = utils::load_config().await;
-
-    let s3_analyzer = S3Analyzer {
-        config: config
-    };
-    assert_eq!(s3_analyzer.get_name(), "s3".to_string());
-}

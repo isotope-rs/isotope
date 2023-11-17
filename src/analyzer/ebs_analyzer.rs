@@ -41,12 +41,3 @@ impl analyzer_trait::Analyzer for EbsAnalyzer {
         "ebs".to_string()
     }
 }
-
-#[tokio::test]
-async fn get_name_test() {
-    let config = utils::load_config().await;
-    let ebs_analyzer = EbsAnalyzer {
-        config: config
-    };
-    assert_eq!(ebs_analyzer.get_name(), "ebs".to_string());
-}

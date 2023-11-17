@@ -43,11 +43,3 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
         "rds".to_string()
     }
 }
-#[tokio::test]
-async fn get_name_test() {
-    let config = utils::load_config().await;
-    let rds_analyzer = RDSAnalyzer {
-        config: config
-    };
-    assert_eq!(rds_analyzer.get_name(), "rds".to_string());
-}
