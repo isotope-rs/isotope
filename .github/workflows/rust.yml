@@ -15,8 +15,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v3
+
+      - name: Install Rust nightly
+        run: |
+          curl -sSf https://rust-lang.org/install.sh | sh
+          rustup default nightly
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+
+      - name: Check for vulnerabilities
+        run: cargo audit
+
+      - name: Format code
+        run: cargo fmt --all -- --check
+        
+      - name: Run Clippy linter
+        run: cargo clippy -- -D warnings
+        
+      - name: Run cargo check
+        run: cargo check --all-features --workspace --verbose
+        
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Run tests
+        run: cargo test --verbose --all-features --all-targets
