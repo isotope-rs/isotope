@@ -29,10 +29,14 @@ jobs:
         run: cargo audit
 
       - name: Format code
-        run: cargo fmt --all -- --check
+        run: |
+          rustup component add rustfmt
+          cargo fmt --all -- --check
         
       - name: Run Clippy linter
-        run: cargo clippy -- -D warnings
+        run: |
+          rustup component add clippy
+          cargo clippy -- -D warnings
         
       - name: Run cargo check
         run: cargo check --all-features --workspace --verbose
