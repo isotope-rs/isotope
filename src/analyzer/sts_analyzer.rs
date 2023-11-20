@@ -1,16 +1,15 @@
-
-use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
+use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
-use crate::analyzer::analyzer_trait::Analyzer;
+use aws_types::sdk_config::SdkConfig;
 
 use aws_types;
 
 use crate::utils;
 
 pub struct STSAnalyzer {
-    pub config: SdkConfig
+    pub config: SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for STSAnalyzer {
@@ -29,9 +28,7 @@ impl analyzer_trait::Analyzer for STSAnalyzer {
 
             // Use IAM to get user's MFA status
             let mfa_devices_response = iam.list_mfa_devices().user_name(&username).send().await;
-            let mfa_devices = mfa_devices_response
-                .unwrap()
-                .mfa_devices;
+            let mfa_devices = mfa_devices_response.unwrap().mfa_devices;
 
             if mfa_devices.is_empty() {
                 results.push(AnalysisResults {

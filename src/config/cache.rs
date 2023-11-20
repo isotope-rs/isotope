@@ -16,10 +16,8 @@ impl Conf {
 
         // In this scenario we cannot use ? operand as it impacts creation of the struct
         match save_config(&self) {
-            Ok(_x) => {
-                self
-            },
-            Err(_e) => panic!()
+            Ok(_x) => self,
+            Err(_e) => panic!(),
         }
     }
     pub fn remove_from_cache(mut self, raw_cache_key: &str) -> Result<Self, Box<dyn Error>> {

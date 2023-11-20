@@ -1,4 +1,3 @@
-
 use crate::config::{get_or_create_config, Conf};
 use base64::engine::general_purpose;
 use base64::Engine;

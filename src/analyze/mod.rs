@@ -3,11 +3,11 @@ use crate::analyzer::types::AnalysisResults;
 use crate::config::Conf;
 use crate::{analyzer, bedrock, utils};
 use crate::{config, outputs};
-use aws_config::meta::region::{RegionProviderChain};
+use aws_config::meta::region::RegionProviderChain;
 use colored::Colorize;
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::error::Error;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
@@ -115,7 +115,6 @@ pub async fn run_analysis(
                     }
                 }));
             }
-
         }
     }
 
