@@ -2,7 +2,7 @@ use crate::analyzer::analyzer_trait;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
-use aws_sdk_ec2;
+
 use aws_sdk_ec2::types::{Filter, PermissionGroup, SnapshotAttributeName};
 use aws_types::sdk_config::SdkConfig;
 

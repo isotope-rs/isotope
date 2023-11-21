@@ -78,7 +78,7 @@ pub async fn run_analysis(
                             }
                         }
                     }));
-                    count = count + 1;
+                    count += 1;
                 }
                 None => println!("analyzer of type not found"),
             }
@@ -98,7 +98,7 @@ pub async fn run_analysis(
 
                 pb.set_prefix(format!("[{}/{}]", count + 1, alen));
                 pb.set_message(format!("Starting {} analyzer", current_analyzer.get_name()));
-                count = count + 1;
+                count += 1;
                 let thread_tx = tx.clone();
                 tasks.push(tokio::spawn(async move {
                     let response = current_analyzer.run().await;

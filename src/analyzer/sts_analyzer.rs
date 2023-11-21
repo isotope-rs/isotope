@@ -4,7 +4,7 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_types::sdk_config::SdkConfig;
 
-use aws_types;
+
 
 use crate::utils;
 

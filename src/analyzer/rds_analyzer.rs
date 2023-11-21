@@ -1,9 +1,9 @@
 use crate::analyzer::analyzer_trait;
 use crate::analyzer::analyzer_trait::Analyzer;
 use crate::analyzer::types::AnalysisResults;
-use crate::utils;
+
 use async_trait::async_trait;
-use aws_sdk_rds;
+
 use aws_types::sdk_config::SdkConfig;
 
 pub struct RDSAnalyzer {
