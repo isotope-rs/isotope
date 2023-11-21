@@ -1,14 +1,11 @@
-
-use aws_types::sdk_config::SdkConfig;
 use crate::analyzer::analyzer_trait;
-use crate::analyzer::types::AnalysisResults;
-use async_trait::async_trait;
-use crate::utils;
 use crate::analyzer::analyzer_trait::Analyzer;
+use crate::analyzer::types::AnalysisResults;
+use crate::utils;
+use async_trait::async_trait;
+use aws_types::sdk_config::SdkConfig;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-
-
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -58,7 +55,7 @@ pub struct Bool {
 }
 
 pub struct S3Analyzer {
-    pub config: SdkConfig
+    pub config: SdkConfig,
 }
 #[async_trait]
 impl analyzer_trait::Analyzer for S3Analyzer {
@@ -75,14 +72,19 @@ impl analyzer_trait::Analyzer for S3Analyzer {
             for b in bucket {
                 let bucket_name = b.name.unwrap();
                 // Check if the S3 bucket ACL is publicly accessible.
-                if let Ok(acl_response)  = s3.get_bucket_acl().bucket(&bucket_name).send().await {
+                if let Ok(acl_response) = s3.get_bucket_acl().bucket(&bucket_name).send().await {
                     for grant in acl_response.grants {
                         if let Some(grantee) = grant.first() {
                             if grantee.clone().grantee.unwrap().uri
-                                == Some("http://acs.amazonaws.com/groups/global/AllUsers".to_string())
+                                == Some(
+                                    "http://acs.amazonaws.com/groups/global/AllUsers".to_string(),
+                                )
                             {
                                 results.push(AnalysisResults {
-                                    message: format!("Publicly accessible S3 bucket {}", &bucket_name),
+                                    message: format!(
+                                        "Publicly accessible S3 bucket {}",
+                                        &bucket_name
+                                    ),
                                     analyzer_name: self.get_name(),
                                     advice: "".to_string(),
                                 });
@@ -115,8 +117,7 @@ impl analyzer_trait::Analyzer for S3Analyzer {
                             Err(_e) => (),
                         }
                     }
-                    Err(_err) => (
-                        ),
+                    Err(_err) => (),
                 }
             }
         }
@@ -128,4 +129,3 @@ impl analyzer_trait::Analyzer for S3Analyzer {
         "s3".to_string()
     }
 }
-

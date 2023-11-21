@@ -1,5 +1,3 @@
-
-
 use aws_sdk_bedrockruntime::primitives::Blob;
 
 use serde::{Deserialize, Serialize};
@@ -34,12 +32,11 @@ impl From<ClaudParams> for Blob {
         Blob::new(serde_json::to_string(&val).unwrap())
     }
 }
-pub struct BedrockClient {
-}
+pub struct BedrockClient {}
 
 impl BedrockClient {
     pub fn new() -> Self {
-        Self{}
+        Self {}
     }
     pub async fn enrich(&self, prompt: String) -> Result<String, Box<dyn Error>> {
         // force the config rejoin be set
