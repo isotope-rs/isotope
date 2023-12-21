@@ -44,6 +44,8 @@ tokio = { version = "1", features = ["full"] }
 unescape = "0.1.0"
 v = "0.1.0"
 chrono = "0.4.31"
+log = "0.4.20"
+env_logger = "0.10.1"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]

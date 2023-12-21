@@ -12,6 +12,7 @@ use std::error::Error;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 use std::time::Duration;
+use log::warn;
 
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
@@ -149,7 +150,9 @@ pub async fn run_analysis(
                             // check if the processed results analyzer exists as key
                             // upsert the analysis result into the vector
                         }
-                        Err(_e) => (),
+                        Err(e) => (
+                            warn!("{}", e)
+                            ),
                     }
                 }
             }

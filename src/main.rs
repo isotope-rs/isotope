@@ -1,3 +1,5 @@
+use std::env;
+use std::process::exit;
 use clap::{Parser, Subcommand};
 mod analyze;
 mod analyzer;
@@ -40,8 +42,27 @@ enum Commands {
         resource: String,
     },
 }
+
+const ENVS: &'static [&'static str] = &["BEDROCK_REGION",
+    "BEDROCK_MODEL",
+"AWS_REGION","AWS_ACCESS_KEY","AWS_SECRET_ACCESS_KEY"];
+
+
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+
+    for e in ENVS {
+        let r = env::var(e);
+        match r {
+            Ok(x) => {},
+            Err(_e) => {
+                    println!("ENV: {} not found",e);
+                    exit(1);
+            },
+        }
+    }
+
     let args = Args::parse();
 
     match &args.command {

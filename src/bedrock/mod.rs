@@ -32,25 +32,27 @@ impl From<ClaudParams> for Blob {
         Blob::new(serde_json::to_string(&val).unwrap())
     }
 }
-pub struct BedrockClient {}
+pub struct BedrockClient {
+    region: Region,
+    bedrock_model: String
+}
 
 impl BedrockClient {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            region: Region::new(env::var("BEDROCK_REGION").unwrap().clone()),
+            bedrock_model: env::var("BEDROCK_MODEL").unwrap().clone()
+        }
     }
     pub async fn enrich(&self, prompt: String) -> Result<String, Box<dyn Error>> {
         // force the config rejoin be set
-        let bedrock_region = env::var("BEDROCK_REGION")?.clone();
-        let region = Region::new(bedrock_region);
-        let config = aws_config::from_env().region(region).load().await;
+        let config = aws_config::from_env().region(self.region.clone()).load().await;
         let client = aws_sdk_bedrockruntime::Client::new(&config);
-        let bedrock_model = env::var("BEDROCK_MODEL")?;
-
         let question = format!("{} {}", prompt::DEFAULT_PROMPT, prompt.as_str());
 
         let response = client
             .invoke_model()
-            .model_id(bedrock_model)
+            .model_id(self.bedrock_model.clone())
             .content_type("application/json")
             .body(ClaudParams::new(question.as_str()).into())
             .send()
