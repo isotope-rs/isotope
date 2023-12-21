@@ -10,6 +10,7 @@ mod s3_analyzer;
 mod sg_analyzer;
 mod sts_analyzer;
 pub(crate) mod types;
+mod iam_analyzer;
 
 pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
     let analyzers: Vec<Box<dyn Analyzer>> = vec![
@@ -34,6 +35,9 @@ pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
         Box::new(ec2_snapshot_analyzer::EC2SnapshotAnalyzer {
             config: config.clone(),
         }),
+        Box::new(iam_analyzer::IamAnalyzer {
+            config: config.clone(),
+        })
     ];
     analyzers
 }

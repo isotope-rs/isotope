@@ -106,6 +106,8 @@ isotope analyze -a S3
 - EC2
   - Orphaned Elastic IP address
   - Public snapshot detection
+- IAM
+  - Orphaned/unused key detection
  
 ### Community
 
