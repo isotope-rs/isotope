@@ -12,12 +12,7 @@ pub struct SecurityGroupsAnalyzer {
 #[async_trait]
 impl analyzer_trait::Analyzer for SecurityGroupsAnalyzer {
     async fn run(&self) -> Option<Vec<AnalysisResults>> {
-        println!(
-            "{} {} {}",
-            "Running".green(),
-            "Security Groups".blue(),
-            "analyzer".green()
-        );
+
         let mut results = Vec::new();
         let client = aws_sdk_ec2::Client::new(&self.config);
         let response = client.describe_security_groups().send().await;
