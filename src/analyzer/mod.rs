@@ -4,7 +4,7 @@ use aws_types::sdk_config::SdkConfig;
 pub mod analyzer_trait;
 mod ebs_analyzer;
 mod ec2_snapshot_analyzer;
-mod eip_analzyer;
+mod eip_analyzer;
 mod rds_analyzer;
 mod s3_analyzer;
 mod sg_analyzer;
@@ -29,7 +29,7 @@ pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
         Box::new(sg_analyzer::SecurityGroupsAnalyzer {
             config: config.clone(),
         }),
-        Box::new(eip_analzyer::EipAnalyzer {
+        Box::new(eip_analyzer::EipAnalyzer {
             config: config.clone(),
         }),
         Box::new(ec2_snapshot_analyzer::EC2SnapshotAnalyzer {
