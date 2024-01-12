@@ -4,8 +4,6 @@ use crate::analyzer::types::AnalysisResults;
 use async_trait::async_trait;
 use aws_types::sdk_config::SdkConfig;
 
-
-
 use crate::utils;
 
 pub struct STSAnalyzer {

@@ -15,6 +15,7 @@ impl analyzer_trait::Analyzer for RDSAnalyzer {
         let mut results = Vec::new();
         let rds = aws_sdk_rds::Client::new(&self.config);
         let response = rds.describe_db_instances().send().await;
+
         for dbinstances in response {
             for vdbs in dbinstances.db_instances.iter() {
                 for dbs in vdbs.iter() {

@@ -4,15 +4,16 @@ use crate::config::Conf;
 use crate::{analyzer, bedrock, utils};
 use crate::{config, outputs};
 use aws_config::meta::region::RegionProviderChain;
-use colored::Colorize;
+use foreach::ForEach;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use inquire::Text;
+use log::warn;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::error::Error;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 use std::time::Duration;
-use log::warn;
 
 pub async fn list_analyzers() -> Result<(), Box<dyn Error>> {
     // Setup available providers
@@ -29,12 +30,8 @@ pub async fn run_analysis(
     selected_analyzer: &Option<String>,
     enable_json: &bool,
     explain: &bool,
+    interactive: &bool,
 ) -> Result<(), Box<dyn Error>> {
-    // TODO: Refactor this horrible initialisation of the config
-    let mut conf: Conf = Conf::new();
-    if let Ok(c) = config::get_or_create_config() {
-        conf = c
-    }
 
     // The first action should be to establish if configuration is valid
     let config = utils::load_config().await;
@@ -133,35 +130,40 @@ pub async fn run_analysis(
     let mut processed_results: HashMap<String, Vec<AnalysisResults>> = HashMap::new();
     // generate Vectors aligned to each analyzer type
     // Feed results into Bedrock
-    for mut res in results {
-        if !res.message.is_empty() {
-            // Check if the data is in the cache
-            match conf.fetch_from_cache(&res.message) {
-                Some(x) => res.advice = x.clone(),
-                None => {
-                    let result = bedrock_client.enrich(res.message.clone()).await;
-                    // TODO: missing step to copy the bedrock result into res
-                    match result {
-                        Ok(x) => {
-                            res.advice = x.clone();
-                            // upsert into the cache for next time
-                            conf.clone().upsert_into_cache(&res.message, &x);
-                            // pass ownership over of advice
-                            // check if the processed results analyzer exists as key
-                            // upsert the analysis result into the vector
+    let mut conf: Conf = Conf::new();
+    if let Ok(c) = config::get_or_create_config() {
+        conf = c
+    }
+
+    if *explain {
+        for mut res in results.clone() {
+            if !res.message.is_empty() {
+                // Check if the data is in the cache
+                // TODO: check if this is broken...
+                match &conf.fetch_from_cache(&res.message) {
+                    Some(x) => res.advice = x.clone(),
+                    None => {
+                        let result = bedrock_client.enrich(res.message.clone()).await;
+                        match result {
+                            Ok(x) => {
+                                res.advice = x.clone();
+                                // upsert into the cache for next time
+                                &conf.upsert_into_cache(&res.message, &x);
+                                // pass ownership over of advice
+                                // check if the processed results analyzer exists as key
+                                // upsert the analysis result into the vector
+                            }
+                            Err(e) => (warn!("{}", e)),
                         }
-                        Err(e) => (
-                            warn!("{}", e)
-                            ),
                     }
                 }
-            }
-            match processed_results.entry(res.analyzer_name.clone()) {
-                Entry::Occupied(mut e) => {
-                    e.get_mut().push(res);
-                }
-                Entry::Vacant(e) => {
-                    e.insert(vec![res]);
+                match processed_results.entry(res.analyzer_name.clone()) {
+                    Entry::Occupied(mut e) => {
+                        e.get_mut().push(res);
+                    }
+                    Entry::Vacant(e) => {
+                        e.insert(vec![res]);
+                    }
                 }
             }
         }
@@ -177,6 +179,43 @@ pub async fn run_analysis(
     } else {
         let mut p = outputs::Processor::new(processed_results, None, *explain);
         p.print();
+    }
+
+    if *interactive && *explain {
+        println!("Starting interactive mode type exit to leave.");
+
+        // Flatten our results structure into something more easily parsable as a preloaded context
+        // We will create a hash_map of key values
+        let mut flattened_results = HashMap::new();
+
+        results.clone().iter().foreach(|item, _iter| {
+            flattened_results.insert(item.message.clone(), item.advice.clone());
+        });
+        let serialized_data = serde_json::to_string(&flattened_results).unwrap();
+
+        loop {
+            let prompt = Text::new(">").prompt();
+            match prompt {
+                Ok(p) => {
+                    if p.eq("exit") {
+                        break;
+                    }
+                    let mut compounded_prompt = "Given the following data as context: ".to_owned();
+                    compounded_prompt.push_str(serialized_data.as_str());
+                    compounded_prompt.push_str(" Now answer my question: ");
+                    compounded_prompt.push_str(p.as_str());
+
+                    // Inject the query with context
+                    let result = bedrock_client.enrich(compounded_prompt).await;
+                    // TODO: missing step to copy the bedrock result into res
+                    match result {
+                        Ok(x) => println!("{}", x),
+                        Err(e) => {}
+                    }
+                }
+                Err(e) => println!("An error occured."),
+            }
+        }
     }
     Ok(())
 }

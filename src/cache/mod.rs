@@ -10,7 +10,6 @@ pub async fn list() -> Result<(), Box<dyn Error>> {
         cloud: String::new(),
         stored_advice: HashMap::new(),
     };
-
     if let Ok(c) = get_or_create_config() {
         conf = c
     }

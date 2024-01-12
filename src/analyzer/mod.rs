@@ -5,12 +5,12 @@ pub mod analyzer_trait;
 mod ebs_analyzer;
 mod ec2_snapshot_analyzer;
 mod eip_analyzer;
+mod iam_analyzer;
 mod rds_analyzer;
 mod s3_analyzer;
 mod sg_analyzer;
 mod sts_analyzer;
 pub(crate) mod types;
-mod iam_analyzer;
 
 pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
     let analyzers: Vec<Box<dyn Analyzer>> = vec![
@@ -37,7 +37,7 @@ pub fn generate_analyzers(config: &SdkConfig) -> Vec<Box<dyn Analyzer>> {
         }),
         Box::new(iam_analyzer::IamAnalyzer {
             config: config.clone(),
-        })
+        }),
     ];
     analyzers
 }

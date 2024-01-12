@@ -34,19 +34,22 @@ impl From<ClaudParams> for Blob {
 }
 pub struct BedrockClient {
     region: Region,
-    bedrock_model: String
+    bedrock_model: String,
 }
 
 impl BedrockClient {
     pub fn new() -> Self {
         Self {
             region: Region::new(env::var("BEDROCK_REGION").unwrap().clone()),
-            bedrock_model: env::var("BEDROCK_MODEL").unwrap().clone()
+            bedrock_model: env::var("BEDROCK_MODEL").unwrap().clone(),
         }
     }
     pub async fn enrich(&self, prompt: String) -> Result<String, Box<dyn Error>> {
         // force the config rejoin be set
-        let config = aws_config::from_env().region(self.region.clone()).load().await;
+        let config = aws_config::from_env()
+            .region(self.region.clone())
+            .load()
+            .await;
         let client = aws_sdk_bedrockruntime::Client::new(&config);
         let question = format!("{} {}", prompt::DEFAULT_PROMPT, prompt.as_str());
 
@@ -62,7 +65,6 @@ impl BedrockClient {
         let mut response_capture = ClaudeOutput {
             completion: "".to_string(),
         };
-
         let data = response;
         let data = serde_json::from_slice::<ClaudeOutput>(data.as_ref()).expect("invalid schema");
         response_capture.completion = data.completion.clone();

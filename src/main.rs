@@ -1,6 +1,6 @@
+use clap::{Parser, Subcommand};
 use std::env;
 use std::process::exit;
-use clap::{Parser, Subcommand};
 mod analyze;
 mod analyzer;
 mod bedrock;
@@ -35,6 +35,8 @@ enum Commands {
             long_help = "Use Bedrock AI to assist in remediation of issues"
         )]
         explain: bool,
+        #[arg(short, long, long_help = "Enable interactive conversational mode")]
+        interactive: bool,
     },
     /// List resources by type
     List {
@@ -43,10 +45,13 @@ enum Commands {
     },
 }
 
-const ENVS: &'static [&'static str] = &["BEDROCK_REGION",
+const ENVS: &'static [&'static str] = &[
+    "BEDROCK_REGION",
     "BEDROCK_MODEL",
-"AWS_REGION","AWS_ACCESS_KEY","AWS_SECRET_ACCESS_KEY"];
-
+    "AWS_REGION",
+    "AWS_ACCESS_KEY",
+    "AWS_SECRET_ACCESS_KEY",
+];
 
 #[tokio::main]
 async fn main() {
@@ -55,25 +60,25 @@ async fn main() {
     for e in ENVS {
         let r = env::var(e);
         match r {
-            Ok(x) => {},
+            Ok(x) => {}
             Err(_e) => {
-                    println!("ENV: {} not found",e);
-                    exit(1);
-            },
+                println!("ENV: {} not found", e);
+                exit(1);
+            }
         }
     }
 
     let args = Args::parse();
-
     match &args.command {
         Some(Commands::Analyze {
             analyzer,
             debug: _,
             json,
             explain,
+            interactive,
         }) => {
             #[warn(unused_must_use)]
-            analyze::run_analysis(analyzer, json, explain).await;
+            analyze::run_analysis(analyzer, json, explain, interactive).await;
         }
         Some(Commands::List { resource }) => match resource.as_str() {
             "analyzers" => {

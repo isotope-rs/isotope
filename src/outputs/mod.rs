@@ -37,14 +37,14 @@ impl Processor {
         }
     }
     fn print_text(&self) {
-        for (_key, value) in &self.analysis_results {
+        self.analysis_results.iter().for_each(|(_key, value)| {
             for results in value.iter() {
                 println!("{}", results.message.blue());
                 if self.explain {
                     println!("{}", results.advice.green())
                 }
             }
-        }
+        });
     }
 
     fn print_json(&mut self) {

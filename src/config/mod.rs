@@ -32,7 +32,7 @@ pub fn get_conf_path() -> String {
     confpath.push_str(CONFFILE);
     confpath
 }
-pub fn save_config(config: &Conf) -> Result<(), Box<dyn Error>> {
+pub fn save_config(config: Conf) -> Result<(), Box<dyn Error>> {
     let p = get_conf_path();
     let s = serde_json::to_string(&config)?;
     let mut f = std::fs::OpenOptions::new()
