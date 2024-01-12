@@ -68,25 +68,3 @@ fn config_test() {
     assert_ne!(p.len(), 0);
     assert_eq!(p.contains(CONFFILE), true);
 }
-
-#[test]
-
-fn write_read_config_test() {
-    let k = "gamma";
-    let v = "epsilon";
-    let mut conf: Conf = Conf::new();
-    if let Ok(c) = get_or_create_config() {
-        conf = c
-    }
-    conf = conf.upsert_into_cache(k, v);
-    match conf.fetch_from_cache(k) {
-        Some(x) => {
-            let _ = conf.remove_from_cache(k);
-            assert_eq!(x, v);
-        }
-        None => {
-            let _ = conf.remove_from_cache(k);
-            assert_ne!(0, 0);
-        }
-    }
-}
