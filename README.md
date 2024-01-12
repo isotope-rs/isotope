@@ -91,6 +91,19 @@ Optionally for a single analyzer
 isotope analyze -a S3
 ```
 
+4. Use Bedrock AI 
+
+```
+isotope analyze --explain
+```
+
+5. Debug in interative mode
+
+```
+isotope analyze --explain --interactive
+```
+
+
 ### Analyzers
 
 - S3
