@@ -43,14 +43,30 @@ on:
   pull_request:
 
 jobs:
+  # Create release PR
+  release_please:
+    name: Create release PR
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: rust
+
   # Run 'cargo dist plan' to determine what tasks we need to do
   plan:
+    needs: release_please
     runs-on: ubuntu-latest
     outputs:
       val: ${{ steps.plan.outputs.manifest }}
-      tag: ${{ !github.event.pull_request && github.ref_name || '' }}
       tag-flag: ${{ !github.event.pull_request && format('--tag={0}', github.ref_name) || '' }}
-      publishing: ${{ !github.event.pull_request }}
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -74,8 +90,8 @@ jobs:
   # Build and packages all the platform-specific things
   upload-local-artifacts:
     # Let the initial task tell us to not run (currently very blunt)
-    needs: plan
-    if: ${{ fromJson(needs.plan.outputs.val).releases != null && (needs.plan.outputs.publishing == 'true' || fromJson(needs.plan.outputs.val).ci.github.pr_run_mode == 'upload') }}
+    needs: [release_please, plan]
+    if: ${{ fromJson(needs.plan.outputs.val).releases != null && (needs.release_please.outputs.release_created == 'true' || fromJson(needs.plan.outputs.val).ci.github.pr_run_mode == 'upload') }}
     strategy:
       fail-fast: false
       # Target platforms/runners are computed by cargo-dist in create-release.
@@ -131,7 +147,7 @@ jobs:
 
   # Build and package all the platform-agnostic(ish) things
   upload-global-artifacts:
-    needs: [plan, upload-local-artifacts]
+    needs: [release_please, plan, upload-local-artifacts]
     runs-on: "ubuntu-20.04"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -163,26 +179,15 @@ jobs:
           name: artifacts
           path: ${{ steps.cargo-dist.outputs.paths }}
 
-  should-publish:
-    needs:
-      - plan
-      - upload-local-artifacts
-      - upload-global-artifacts
-    if: ${{ needs.plan.outputs.publishing == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: print tag
-        run: echo "ok we're publishing!"
-
   publish-homebrew-formula:
-    needs: [plan, should-publish]
+    needs: [release_please, plan]
     runs-on: "ubuntu-20.04"
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PLAN: ${{ needs.plan.outputs.val }}
       GITHUB_USER: "axo bot"
       GITHUB_EMAIL: "admin+bot@axo.dev"
-    if: ${{ !fromJson(needs.plan.outputs.val).announcement_is_prerelease || fromJson(needs.plan.outputs.val).publish_prereleases }}
+    if: ${{ needs.release_please.outputs.release_created == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -210,7 +215,8 @@ jobs:
 
   # Create a Github Release with all the results once everything is done
   publish-release:
-    needs: [plan, should-publish]
+    needs: [release_please, plan]
+    if: ${{ needs.release_please.outputs.release_created == 'true' }}
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -228,10 +234,7 @@ jobs:
           # Remove the granular manifests
           rm artifacts/*-dist-manifest.json
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
         with:
-          tag: ${{ needs.plan.outputs.tag }}
-          name: ${{ fromJson(needs.plan.outputs.val).announcement_title }}
-          body: ${{ fromJson(needs.plan.outputs.val).announcement_github_body }}
-          prerelease: ${{ fromJson(needs.plan.outputs.val).announcement_is_prerelease }}
-          artifacts: "artifacts/*"
+          files: artifacts/*
+          tag_name: ${{ needs.release_please.outputs.tag_name }}
