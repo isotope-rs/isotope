@@ -68,9 +68,9 @@ Or with Cargo
 cargo install isotope
 ```
 
-## Usage
+## Setup
 
-1. Set environment variables for AWS access
+Set environment variables for AWS access
 
 ```
 export AWS_ACCESS_KEY=""
@@ -79,26 +79,25 @@ export AWS_REGION="" ( e.g. eu-west-2 //wherever your VPC is )
 export BEDROCK_REGION="eu-central-1"  ( e.g. us-east-1,us-west-2, ap-southeast-1, ap-northeast-1 )
 export BEDROCK_MODEL="anthropic.claude-v2" ( e.g. anthropic.claude-v2, anthropic.claude-v1, anthropic.claude-instant-v1 )
 ```
-2. Run all isotope analyzers
 
+## Usage 
+
+_Run all isotope analyzers_
 ```
 isotope analyze
 ```
 
-Optionally for a single analyzer
-
+_Optionally for a single analyzer_
 ```
 isotope analyze -a S3
 ```
 
-4. Use Bedrock AI 
-
+_Use Bedrock AI_
 ```
 isotope analyze --explain
 ```
 
-5. Debug in interative mode
-
+_Debug in interactive mode_
 ```
 isotope analyze --explain --interactive
 ```
