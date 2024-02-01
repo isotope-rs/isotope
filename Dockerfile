@@ -1,7 +1,7 @@
 ####################################################################################################
 ## Builder
 ####################################################################################################
-FROM rust:latest AS builder
+FROM --platform=amd64 rust:latest AS builder
 
 RUN update-ca-certificates
 
@@ -28,7 +28,8 @@ RUN cargo build --release
 ####################################################################################################
 ## Final image
 ####################################################################################################
-FROM gcr.io/distroless/cc
+FROM --platform=amd64 gcr.io/distroless/cc
+COPY --from=builder /lib/x86_64-linux-gnu/libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
 
 # Import from builder.
 COPY --from=builder /etc/passwd /etc/passwd
